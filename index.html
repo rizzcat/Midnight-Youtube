@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Midnight YouTube V4 ^_^</title>
+<meta name="theme-color" content="#7c5cff">
+<link rel="stylesheet" href="main.css">
+<link rel="stylesheet" href="themes.css">
+<link rel="stylesheet" href="responsive.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<canvas id="waveCanvas" style="position:fixed; inset:0; z-index:-1; pointer-events:none;"></canvas>
+
+<div id="app">
+
+    <aside class="sidebar">
+        <div class="logo">
+             Midnight YouTube
+            <span class="ultra-badge">Norepted
+                 Skidded</span>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="tab active" data-tab="search">🔍 Search</button>
+            <button class="tab" data-tab="favorites">⭐ Favorites</button>
+            <button class="tab" data-tab="history">🕒 History</button>
+            <button class="tab" data-tab="settings">⚙️ Settings</button>
+            <button class="tab" data-tab="channel" id="channelTab" style="display:none; border-left: 2px solid var(--accent);">📺 Channel</button>
+        </nav>
+    </aside>
+
+    <main class="content">
+
+        <!-- Search Tab -->
+        <section id="searchTab" class="tab-content active">
+            <div class="search-bar">
+                <div style="position:relative; flex:1;">
+                    <input type="text" id="searchInput" placeholder="キーワード、@ハンドル、チャンネルID、URLを入力..." autocomplete="off">
+                    <div id="suggestBox" class="suggest-box" style="display:none;"></div>
+                </div>
+                <button id="searchBtn" class="search-btn">検索</button>
+            </div>
+            <div id="searchResultsGrid" class="results-grid"></div>
+            <button id="loadMoreBtn" class="load-more-btn" style="display:none; margin: 20px auto;">さらに読み込む</button>
+        </section>
+
+        <!-- Channel Tab -->
+        <section id="channelTabContent" class="tab-content">
+            <div class="channel-sub-tabs" style="display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid #22263b; padding-bottom: 8px;">
+                <button id="channelVideosSubTab" class="sub-tab active" style="background: none; border: none; color: var(--text); font-size: 16px; font-weight: bold; cursor: pointer; padding: 6px 12px; border-bottom: 2px solid var(--accent);">動画</button>
+                <button id="channelShortsSubTab" class="sub-tab" style="background: none; border: none; color: var(--muted); font-size: 16px; font-weight: bold; cursor: pointer; padding: 6px 12px;">ショート</button>
+            </div>
+            
+            <div id="channelResultsGrid" class="results-grid"></div>
+            <button id="channelLoadMoreBtn" class="load-more-btn" style="display:none; margin: 20px auto;">さらに読み込む</button>
+        </section>
+
+        <!-- Favorites Tab -->
+        <section id="favoritesTab" class="tab-content">
+            <h2 style="margin-bottom:20px; font-size:20px;">⭐ お気に入り</h2>
+            <div id="favoritesGrid" class="results-grid"></div>
+        </section>
+
+        <!-- History Tab -->
+        <section id="historyTab" class="tab-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="font-size:20px;">🕒 視聴履歴</h2>
+                <button id="clearHistoryBtn" class="clear-btn">全クリア</button>
+            </div>
+            <div id="historyGrid" class="results-grid"></div>
+        </section>
+
+<!-- Settings Tab 内 -->
+<section id="settingsTab" class="tab-content">
+    <h2 style="margin-bottom:20px; font-size:20px;">⚙️ システム設定</h2>
+    <div class="settings-panel" style="display:flex; flex-direction:column; gap:16px;">
+
+        <div class="setting-item">
+            <span>🎨 プリセットテーマ</span>
+            <select id="themeSelect">
+                <option value="midnight">MIDNIGHT (標準)</option>
+                <option value="oled">OLED (漆黒)</option>
+                <option value="cyber">CYBER (電脳)</option>
+                <option value="neon">NEON (残響)</option>
+                <option value="glass">GLASS (硝子)</option>
+                <option value="rainbow">🌈 RAINBOW (アニメ)</option>
+            </select>
+        </div>
+
+        <div class="setting-item">
+            <span>🌈 カスタムアクセントカラー</span>
+            <input type="color" id="accentColorPicker" value="#7c5cff" style="width:80px; height:40px; border:none; cursor:pointer;">
+        </div>
+        <text>Default : 192, 92, 255</text>
+
+        <div class="setting-item">
+            <span>🐛 デバッガーパネル非表示</span>
+            <label class="switch">
+                <input type="checkbox" id="debugToggleSetting" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+    </div>
+</section>
+    </main>
+</div>
+
+<!-- PiP Workspace -->
+<div id="windowWorkspace" style="position:fixed; inset:0; pointer-events:none; z-index:1000;"></div>
+<div id="toastContainer"></div>
+
+<!-- Debug Panel -->
+<div id="debugPanel" class="debug-panel">
+    <div class="debug-header" id="debugHeader">
+        <span>🐛 Midnight Debugger</span>
+        <button id="debugToggleBtn">🔽</button>
+    </div>
+    <div class="debug-body">
+        <div class="debug-section">
+            <h4>📊 System State</h4>
+            <div class="debug-row"><span>Search Filter IDs:</span> <strong id="dbSearchIds">0</strong></div>
+            <div class="debug-row"><span>Channel Filter IDs:</span> <strong id="dbChannelIds">0</strong></div>
+            <div class="debug-row"><span>Active Windows:</span> <strong id="dbActiveWins">0</strong></div>
+        </div>
+        <div class="debug-section">
+            <h4>📡 Network Fetch Logs</h4>
+            <div id="debugNetLogs" class="debug-logs-box"></div>
+        </div>
+        <div class="debug-section">
+            <h4>💾 Storage Snapshots</h4>
+            <button class="debug-btn" id="dbBtnReloadStorage" style="width:100%; margin-bottom:6px;">🔄 更新</button>
+            <pre id="debugStorageJson" class="debug-json"></pre>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+/* ==========================
+   MIDNIGHT (Default)
+========================== */
+body.theme-midnight {
+    --bg: #07070b; --panel: #101018; --panel2: #181825; --accent: #7c5cff; --accent2: #9d8aff; --text: #f5f5f5; --muted: #9ca0b3;
+}
+
+/* ==========================
+   OLED
+========================== */
+body.theme-oled {
+    --bg: #000000; --panel: #050505; --panel2: #111111; --accent: #ffffff; --accent2: #cccccc; --text: #ffffff; --muted: #888888;
+}
+
+/* ==========================
+   CYBER
+========================== */
+body.theme-cyber {
+    --bg: #060b11; --panel: #0d1520; --panel2: #172435; --accent: #00f0ff; --accent2: #66f7ff; --text: #e8ffff; --muted: #8fb7c2;
+}
+body.theme-cyber .logo { text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent); }
+
+/* ==========================
+   NEON
+========================== */
+body.theme-neon {
+    --bg: #09050d; --panel: #12081a; --panel2: #1d0f2a; --accent: #ff00d4; --accent2: #ff77e7; --text: #ffffff; --muted: #c89ac9;
+}
+body.theme-neon .tab.active { box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent); }
+
+/* ==========================
+   GLASS
+========================== */
+body.theme-glass {
+    --bg: #0d1117; --panel: rgba(255,255,255,0.08); --panel2: rgba(255,255,255,0.12); --accent: #5ba7ff; --accent2: #9ac8ff; --text: #ffffff; --muted: #b0c3d6;
+}
+body.theme-glass .sidebar, body.theme-glass .panel, body.theme-glass .video-card {
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* ACCENT GLOW */
+body.theme-midnight .tab.active, body.theme-cyber .tab.active, body.theme-neon .tab.active {
+    box-shadow: 0 0 8px var(--accent), 0 0 16px rgba(124,92,255,0.3);
+}

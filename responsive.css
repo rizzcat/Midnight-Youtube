@@ -1,0 +1,31 @@
+@media (min-width: 1440px) {
+    .results-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+}
+
+@media (max-width: 1439px) {
+    .results-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+}
+
+@media (max-width: 1024px) {
+    :root { --sidebar-width: 260px; }
+    .content { padding: 18px; }
+    .results-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+}
+
+@media (max-width: 768px) {
+    body { overflow: auto; }
+    #app { flex-direction: column; }
+    .sidebar { position: sticky; top: 0; width: 100%; height: auto; border-right: none; border-bottom: 1px solid #22263b; padding: 15px; }
+    .nav-tabs { flex-direction: row; overflow-x: auto; gap: 8px; }
+    .tab { min-width: max-content; padding: 10px 14px; font-size: 13px; }
+    .content { padding: 14px; height: calc(100vh - 140px); overflow-y: auto; }
+    .search-bar { flex-direction: column; gap: 8px; }
+    .search-bar button { padding: 12px; }
+    .results-grid { grid-template-columns: 1fr; }
+    .pip-window { width: 90% !important; left: 5% !important; right: 5% !important; height: auto; aspect-ratio: 16/10; }
+}
+
+@media (max-width: 480px) {
+    .logo { font-size: 18px; }
+    .ultra-badge { font-size: 8px; }
+}
