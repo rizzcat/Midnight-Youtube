@@ -1,13 +1,5 @@
-// =============================================================
-//  Midnight YouTube V9 — app.js
-//  Full Enhanced Edition (Fixed & Optimized)
-// =============================================================
-
 const WORKER_URL = "https://silent-mouse-5878.78q38gs6.workers.dev/";
 
-// =============================================================
-//  STORAGE
-// =============================================================
 class Storage {
     static get(key, fallback = null) {
         try {
@@ -21,11 +13,8 @@ class Storage {
     static remove(key) { localStorage.removeItem(key); }
 }
 
-// =============================================================
-//  TOAST
-// =============================================================
 class Toast {
-    static show(message, type = "default", duration = 3000) {
+    static show(message, type = "default", duration = 700) {
         const container = document.getElementById("toastContainer");
         if (!container) return;
         const toast = document.createElement("div");
@@ -41,9 +30,6 @@ class Toast {
     }
 }
 
-// =============================================================
-//  THEME MANAGER
-// =============================================================
 class ThemeManager {
     static rainbowInterval = null;
 
@@ -80,7 +66,7 @@ class ThemeManager {
         themeSelect?.addEventListener("change", () => {
             this.apply(themeSelect.value, accentPicker.value);
             Storage.set("theme", themeSelect.value);
-            Toast.show(`Theme switched to: ${themeSelect.value.toUpperCase()}`);
+            Toast.show(`🎨 テーマ → ${themeSelect.value.toUpperCase()}`);
         });
 
         accentPicker?.addEventListener("input", (e) => {
@@ -97,15 +83,15 @@ class ThemeManager {
         waveToggle?.addEventListener("change", (e) => {
             Storage.set("waveEnabled", e.target.checked);
             const canvas = document.getElementById("waveCanvas");
-            if (canvas) canvas.style.display = e.target.checked ? "" : "none";
+            if (canvas) canvas.style.setProperty("display", "block", "important");
         });
 
         particleToggle?.addEventListener("change", (e) => {
             Storage.set("particleEnabled", e.target.checked);
             const el = document.getElementById("particleCanvas");
-            if (el) el.style.display = e.target.checked ? "" : "none";
+            if (el) el.style.setProperty("display", "block", "important");
         });
-
+        
         cardAnimToggle?.addEventListener("change", (e) => {
             Storage.set("cardAnimEnabled", e.target.checked);
             document.querySelectorAll(".video-card").forEach(c => {
@@ -114,9 +100,9 @@ class ThemeManager {
         });
 
         resetBtn?.addEventListener("click", () => {
-            if (!confirm("Delete all data (bookmarks, history, settings)?")) return;
+            if (!confirm("全データ（お気に入り、履歴、設定）を削除しますか？")) return;
             localStorage.clear();
-            Toast.show("All data has been reset.", "danger");
+            Toast.show("🗑 全データをリセットしました", "danger");
             setTimeout(() => location.reload(), 1000);
         });
     }
@@ -125,11 +111,9 @@ class ThemeManager {
         document.body.className = `theme-${theme}`;
         const root = document.documentElement;
 
-        if (theme !== "rainbow") {
-            root.style.setProperty("--accent", accentColor);
-            root.style.setProperty("--accent2", this.lighten(accentColor, 28));
-            root.style.setProperty("--accent-glow", this.hexToRgba(accentColor, 0.22));
-        }
+        root.style.setProperty("--accent", accentColor);
+        root.style.setProperty("--accent2", this.lighten(accentColor, 28));
+        root.style.setProperty("--accent-glow", this.hexToRgba(accentColor, 0.22));
 
         let style = document.getElementById("dyn-accent");
         if (!style) {
@@ -137,11 +121,7 @@ class ThemeManager {
             style.id = "dyn-accent";
             document.head.appendChild(style);
         }
-        if (theme !== "rainbow") {
-            style.textContent = `:root{--accent:${accentColor}!important;--accent2:${this.lighten(accentColor,28)}!important;--accent-glow:${this.hexToRgba(accentColor,0.22)}!important;}`;
-        } else {
-            style.textContent = "";
-        }
+        style.textContent = `:root{--accent:${accentColor}!important;--accent2:${this.lighten(accentColor,28)}!important;--accent-glow:${this.hexToRgba(accentColor,0.22)}!important;}`;
     }
 
     static lighten(hex, pct) {
@@ -169,9 +149,6 @@ class ThemeManager {
     }
 }
 
-// =============================================================
-//  WAVE ENGINE - FIXED
-// =============================================================
 class WaveEngine {
     constructor() {
         this.canvas = document.getElementById("waveCanvas");
@@ -182,31 +159,24 @@ class WaveEngine {
         if (!this.enabled) this.canvas.style.display = "none";
         window.addEventListener("resize", () => this.resize());
         this.resize();
-        this.startLoop();
+        this.loop();
     }
-    
     resize() {
         if (!this.canvas) return;
         this.canvas.width  = window.innerWidth;
         this.canvas.height = window.innerHeight;
     }
-    
     getAccent() {
-        return getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#7c5cff";
+        return getComputedStyle(document.body).getPropertyValue("--accent").trim() || "#7c5cff";
     }
-    
     hexToRgb(hex) {
-        const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : {r:124,g:92,b:255};
+        if (!hex) return {r:124,g:92,b:255};
+        hex = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => r + r + g + g + b + b);
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? { r:parseInt(result[1],16), g:parseInt(result[2],16), b:parseInt(result[3],16) } : {r:124,g:92,b:255};
     }
-    
-    startLoop() {
-        this.loop();
-    }
-    
     loop = () => {
         if (!this.canvas || !document.getElementById("waveCanvas")) return;
-        
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.phase += 0.01;
         const hex = this.getAccent();
@@ -240,9 +210,6 @@ class WaveEngine {
     }
 }
 
-// =============================================================
-//  PARTICLE ENGINE
-// =============================================================
 class ParticleEngine {
     constructor() {
         this.container = document.getElementById("particleCanvas");
@@ -284,7 +251,6 @@ class ParticleEngine {
     }
 }
 
-// Inject particle keyframe
 const particleStyle = document.createElement("style");
 particleStyle.textContent = `
 @keyframes particleFloat {
@@ -295,21 +261,18 @@ particleStyle.textContent = `
 }`;
 document.head.appendChild(particleStyle);
 
-// =============================================================
-//  QUEUE MANAGER
-// =============================================================
 class QueueManager {
     static queue = Storage.get("queue", []);
     static currentIndex = -1;
 
     static add(item) {
         if (this.queue.find(v => v.id === item.id)) {
-            Toast.show("Already in queue", "warning");
+            Toast.show("📋 既にキューにあります", "warning");
             return;
         }
         this.queue.push(item);
         this.save();
-        Toast.show(`Added to queue`);
+        Toast.show(`📋 「${item.title.substring(0,20)}...」をキューに追加`);
         this.render();
         DebugManager.updateStats();
     }
@@ -325,7 +288,7 @@ class QueueManager {
         this.queue = [];
         this.save();
         this.render();
-        Toast.show("Queue cleared");
+        Toast.show("📋 キューをクリアしました");
         DebugManager.updateStats();
     }
 
@@ -336,11 +299,11 @@ class QueueManager {
         }
         this.save();
         this.render();
-        Toast.show("Queue shuffled");
+        Toast.show("🔀 シャッフルしました");
     }
 
     static playAll() {
-        if (!this.queue.length) { Toast.show("Queue is empty", "warning"); return; }
+        if (!this.queue.length) { Toast.show("キューが空です", "warning"); return; }
         this.queue.forEach((item, i) => {
             setTimeout(() => WindowManager.createWindow(item.id, item.title), i * 800);
         });
@@ -353,7 +316,7 @@ class QueueManager {
         if (!list) return;
         list.innerHTML = "";
         if (!this.queue.length) {
-            list.innerHTML = '<div class="no-results" style="padding:40px;">Queue is empty</div>';
+            list.innerHTML = '<div class="no-results" style="padding:40px;">キューは空です。動画カードの 📋 ボタンで追加できます。</div>';
             return;
         }
         this.queue.forEach((item, idx) => {
@@ -367,7 +330,7 @@ class QueueManager {
                     <div class="queue-title">${this.escape(item.title)}</div>
                     <div class="queue-channel">${this.escape(item.channel || "")}</div>
                 </div>
-                <button class="queue-remove" data-id="${item.id}" title="Remove">✕</button>
+                <button class="queue-remove" data-id="${item.id}" title="削除">✕</button>
             `;
             el.querySelector(".queue-remove").onclick = (e) => {
                 e.stopPropagation();
@@ -383,19 +346,16 @@ class QueueManager {
     }
 }
 
-// =============================================================
-//  FAVORITES MANAGER
-// =============================================================
 class FavoritesManager {
     static toggle(item) {
         let list = Storage.get("favorites", []);
         const idx = list.findIndex(v => v.id === item.id);
         if (idx > -1) {
             list.splice(idx, 1);
-            Toast.show("Removed from favorites");
+            Toast.show("⭐ お気に入りから削除しました");
         } else {
             list.push({ ...item, addedAt: Date.now() });
-            Toast.show("Added to favorites", "success");
+            Toast.show("⭐ お気に入りに追加しました", "success");
         }
         Storage.set("favorites", list);
         this.render();
@@ -419,7 +379,7 @@ class FavoritesManager {
 
         grid.innerHTML = "";
         if (!list.length) {
-            grid.innerHTML = '<div class="no-results" style="padding:40px;">No favorites yet</div>';
+            grid.innerHTML = '<div class="no-results" style="padding:40px;">お気に入りはまだありません。⭐ ボタンで追加できます。</div>';
             return;
         }
         list.forEach(item => {
@@ -429,13 +389,13 @@ class FavoritesManager {
                 <div class="thumbnail-wrapper">
                     <img src="https://i.ytimg.com/vi/${item.id}/mqdefault.jpg" loading="lazy">
                     <div class="card-overlay">
-                        <button class="overlay-btn fav-play-btn" title="Play">Play</button>
-                        <button class="overlay-btn fav-remove-btn" title="Remove">Remove</button>
+                        <button class="overlay-btn fav-play-btn" title="再生">▶</button>
+                        <button class="overlay-btn fav-remove-btn" title="削除">✕</button>
                     </div>
                 </div>
                 <div class="card-info">
                     <div class="card-title">${QueueManager.escape(item.title)}</div>
-                    <div class="card-meta">Added: ${new Date(item.addedAt||0).toLocaleDateString()}</div>
+                    <div class="card-meta">追加: ${new Date(item.addedAt||0).toLocaleDateString("ja-JP")}</div>
                 </div>
             `;
             card.querySelector(".fav-play-btn")?.addEventListener("click", (e) => {
@@ -452,9 +412,6 @@ class FavoritesManager {
     }
 }
 
-// =============================================================
-//  HISTORY MANAGER
-// =============================================================
 class HistoryManager {
     static add(item) {
         let list = Storage.get("history", []);
@@ -467,7 +424,7 @@ class HistoryManager {
     static clearAll() {
         Storage.set("history", []);
         this.render();
-        Toast.show("History cleared", "danger");
+        Toast.show("🕒 視聴履歴をすべてクリアしました", "danger");
     }
 
     static render(filter = "") {
@@ -478,7 +435,7 @@ class HistoryManager {
 
         grid.innerHTML = "";
         if (!list.length) {
-            grid.innerHTML = `<div class="no-results" style="padding:40px;">${filter ? "No results" : "No history"}</div>`;
+            grid.innerHTML = `<div class="no-results" style="padding:40px;">${filter ? "検索結果なし" : "視聴履歴はありません。"}</div>`;
             return;
         }
         list.forEach(item => {
@@ -489,12 +446,12 @@ class HistoryManager {
                 <div class="thumbnail-wrapper">
                     <img src="https://i.ytimg.com/vi/${item.id}/mqdefault.jpg" loading="lazy">
                     <div class="card-overlay">
-                        <button class="overlay-btn">Play</button>
+                        <button class="overlay-btn">▶</button>
                     </div>
                 </div>
                 <div class="card-info">
                     <div class="card-title">${QueueManager.escape(item.title)}</div>
-                    <div class="card-meta">${dateStr}</div>
+                    <div class="card-meta">🕒 ${dateStr}</div>
                 </div>
             `;
             card.onclick = () => WindowManager.createWindow(item.id, item.title);
@@ -503,9 +460,6 @@ class HistoryManager {
     }
 }
 
-// =============================================================
-//  WINDOW MANAGER
-// =============================================================
 class WindowManager {
     static _winCount = 0;
     static _windows  = new Map();
@@ -516,7 +470,7 @@ class WindowManager {
             const [firstId, firstEl] = this._windows.entries().next().value;
             firstEl.remove();
             this._windows.delete(firstId);
-            Toast.show("Closed oldest window", "warning");
+            Toast.show("🪟 古いウィンドウを閉じました", "warning");
         }
 
         this._winCount++;
@@ -540,13 +494,16 @@ class WindowManager {
                 <span class="pip-title" title="${QueueManager.escape(title)}">${QueueManager.escape(title)}</span>
                 <div class="pip-controls">
                     <div class="pip-vol-wrap">
-                        <span>Vol</span>
-                        <input type="range" class="pip-vol" min="0" max="100" value="100" title="Volume">
+                        <span>🔊</span>
+                        <input type="range" class="pip-vol" min="0" max="100" value="100" title="音量">
                     </div>
-                    <button class="pip-custom-btn fav-btn" title="Add to favorites">${FavoritesManager.isFav(videoId) ? "Fav" : "Add"}</button>
-                    <button class="pip-custom-btn queue-btn" title="Add to queue">Queue</button>
-                    <button class="pip-custom-btn min-btn" title="Minimize">-</button>
-                    <button class="pip-custom-btn close-btn" title="Close">X</button>
+                    <button class="pip-custom-btn size-btn" data-size="small" title="小">S</button>
+                    <button class="pip-custom-btn size-btn" data-size="medium" title="中">M</button>
+                    <button class="pip-custom-btn size-btn" data-size="large" title="大">L</button>
+                    <button class="pip-custom-btn fav-btn" title="お気に入り">${FavoritesManager.isFav(videoId) ? "★" : "☆"}</button>
+                    <button class="pip-custom-btn queue-btn" title="キューに追加">📋</button>
+                    <button class="pip-custom-btn min-btn" title="最小化">—</button>
+                    <button class="pip-custom-btn close-btn" title="閉じる">✕</button>
                 </div>
             </div>
             <div class="pip-body">
@@ -570,10 +527,21 @@ class WindowManager {
             }), "*");
         });
 
+        win.querySelectorAll(".size-btn").forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const size = btn.dataset.size;
+                const [nW, nH] = sizes[size] || sizes.medium;
+                win.style.width = nW + "px";
+                win.style.height = nH + "px";
+            };
+        });
+
         const header = win.querySelector(".pip-header");
         let drag = false, sx, sy, sl, st;
         header.onmousedown = (e) => {
             if (e.target.tagName === "BUTTON" || e.target.tagName === "INPUT") return;
+            e.preventDefault();
             drag = true;
             this._bringToFront(win);
             sx = e.clientX; sy = e.clientY;
@@ -592,6 +560,7 @@ class WindowManager {
         let resize = false, rsx, rsy, rw, rh;
         win.querySelector(".pip-resizable-handle").onmousedown = (e) => {
             e.stopPropagation();
+            e.preventDefault();
             resize = true;
             this._bringToFront(win);
             rsx=e.clientX; rsy=e.clientY; rw=win.offsetWidth; rh=win.offsetHeight;
@@ -612,7 +581,7 @@ class WindowManager {
             const handle = win.querySelector(".pip-resizable-handle");
             body.style.display  = minimized ? "none" : "";
             handle.style.display = minimized ? "none" : "";
-            win.querySelector(".min-btn").textContent = minimized ? "+" : "-";
+            win.querySelector(".min-btn").textContent = minimized ? "□" : "—";
         };
 
         win.querySelector(".close-btn").onclick = () => {
@@ -630,7 +599,7 @@ class WindowManager {
         const favBtn = win.querySelector(".fav-btn");
         favBtn.onclick = () => {
             FavoritesManager.toggle({ id: videoId, title });
-            favBtn.textContent = FavoritesManager.isFav(videoId) ? "Fav" : "Add";
+            favBtn.textContent = FavoritesManager.isFav(videoId) ? "★" : "☆";
         };
 
         win.querySelector(".queue-btn").onclick = () => {
@@ -667,7 +636,7 @@ class WindowManager {
             return;
         }
         status.style.display = "flex";
-        if (mWins) mWins.textContent = `${count} windows`;
+        if (mWins) mWins.textContent = `${count} 個のウィンドウ`;
         if (videoId && title) {
             if (mTitle) mTitle.textContent = title;
             if (mThumb) mThumb.innerHTML = `<img src="https://i.ytimg.com/vi/${videoId}/mqdefault.jpg">`;
@@ -675,9 +644,6 @@ class WindowManager {
     }
 }
 
-// =============================================================
-//  CONTEXT MENU
-// =============================================================
 class ContextMenu {
     static current = null;
 
@@ -711,16 +677,13 @@ class ContextMenu {
         document.getElementById("ctxCopy")?.addEventListener("click", () => {
             if (this.current) {
                 navigator.clipboard.writeText(`https://youtu.be/${this.current.videoId}`);
-                Toast.show("URL copied");
+                Toast.show("🔗 URLをコピーしました");
             }
         });
         document.getElementById("ctxClose")?.addEventListener("click", () => this.hide());
     }
 }
 
-// =============================================================
-//  YOUTUBE MANAGER
-// =============================================================
 class YouTubeManager {
     constructor() {
         this.searchIds  = new Set();
@@ -738,7 +701,6 @@ class YouTubeManager {
     static enc(s) { return encodeURIComponent((s||"").trim()); }
     static esc(s) { return QueueManager.escape(s); }
 
-    // ── Suggest ──────────────────────────────────────────────
     initSuggest() {
         const input = document.getElementById("searchInput");
         const box   = document.getElementById("suggestBox");
@@ -754,7 +716,7 @@ class YouTubeManager {
             timer = setTimeout(async () => {
                 const data = await DebugManager.fetch(`${WORKER_URL}?suggest=${YouTubeManager.enc(q)}`);
                 if (!box) return;
-                if (data && data.length > 0) {
+                if (data && Array.isArray(data) && data.length > 0) {
                     box.innerHTML = "";
                     data.slice(0,7).forEach(s => {
                         const d = document.createElement("div");
@@ -778,13 +740,12 @@ class YouTubeManager {
         document.addEventListener("click", e => { if(e.target!==input && box) box.style.display="none"; });
     }
 
-    // ── Filter pills ─────────────────────────────────────────
     initFilterPills() {
         document.querySelectorAll("#filterPills .pill").forEach(pill => {
             pill.addEventListener("click", () => {
                 document.querySelectorAll("#filterPills .pill").forEach(p => p.classList.remove("active"));
                 pill.classList.add("active");
-                this.currentFilter = pill.dataset.filter;
+                this.currentFilter = pill.dataset.filter ? pill.dataset.filter.trim().toLowerCase() : "all";
                 this.applyFilter();
             });
         });
@@ -792,15 +753,28 @@ class YouTubeManager {
 
     applyFilter() {
         const f = this.currentFilter;
-        const grid = document.getElementById("searchResultsGrid");
-        if (!grid) return;
-        Array.from(grid.querySelectorAll(".video-card")).forEach(card => {
-            const type = card.dataset.type || "video";
-            card.style.display = (f==="all" || type===f) ? "" : "none";
+        const grids = [
+            document.getElementById("searchResultsGrid"),
+            document.getElementById("channelResultsGrid")
+        ];
+
+        grids.forEach(grid => {
+            if (!grid) return;
+            Array.from(grid.querySelectorAll(".video-card")).forEach(card => {
+                const type = (card.dataset.type || "video").trim().toLowerCase();
+                if (type === "channel") {
+                    card.style.display = "";
+                    return;
+                }
+                if (f === "all" || type === f) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
         });
     }
 
-    // ── Search ───────────────────────────────────────────────
     async search(isLoadMore = false) {
         const input     = document.getElementById("searchInput");
         const grid      = document.getElementById("searchResultsGrid");
@@ -820,7 +794,7 @@ class YouTubeManager {
         }
 
         if (!isLoadMore) {
-            grid.innerHTML = '<div class="loading">Searching...</div>';
+            grid.innerHTML = '<div class="loading">検索中…</div>';
             this.searchIds.clear();
             this.allResults = [];
             this.currentContinuation = null;
@@ -828,7 +802,11 @@ class YouTubeManager {
             if (sortBar) sortBar.style.display = "none";
         }
 
-        let url = `${WORKER_URL}?q=${YouTubeManager.enc(q)}`;
+        if (isLoadMore && loadMore) {
+            loadMore.textContent = "コンテンツを探索中…";
+        }
+
+        let url = `${WORKER_URL}?q=${YouTubeManager.enc(q)}&type=search`;
         if (isLoadMore && this.currentContinuation) {
             url = `${WORKER_URL}?continuation=${YouTubeManager.enc(this.currentContinuation)}&type=search`;
         }
@@ -838,20 +816,62 @@ class YouTubeManager {
 
         if (data?.results?.length) {
             this.currentContinuation = data.continuation || null;
-            this.renderItems(data.results, grid, this.searchIds, true);
-            this.allResults.push(...data.results);
-            if (sortBar) sortBar.style.display = "flex";
-            if (countEl) countEl.textContent = `${this.allResults.length}`;
-            if (loadMore) loadMore.style.display = this.currentContinuation ? "block" : "none";
-            this.applyFilter();
+            const currentFilter = this.currentFilter;
+            
+            const filteredResults = data.results.filter(item => {
+                if (!item || item.type === "channel" || !item.videoId) return false;
+
+                let isShort = !!item.isShort || 
+                              String(item.title).toLowerCase().includes("#shorts") || 
+                              String(item.title).toLowerCase().includes("#ショート") ||
+                              String(item.title).toLowerCase().includes("ショート動画") ||
+                              String(item.title).toLowerCase().includes("#縦型");
+                
+                if (item.duration) {
+                    const parts = item.duration.split(':');
+                    if (parts.length === 2) {
+                        const m = parseInt(parts[0], 10);
+                        const s = parseInt(parts[1], 10);
+                        if (m === 0 || m === 1 || (m === 2 && s < 30)) {
+                            isShort = true;
+                        }
+                    }
+                }
+
+                if (currentFilter === "video" && isShort) return false;
+                if (currentFilter === "short" && !isShort) return false;
+                return true;
+            });
+
+            const matchedCount = filteredResults.length;
+            const targetIds = isLoadMore ? new Set() : this.searchIds;
+
+            if (matchedCount > 0) {
+                this.renderItems(filteredResults, grid, targetIds, true);
+                this.allResults.push(...filteredResults);
+                
+                if (sortBar) sortBar.style.display = "flex";
+                if (countEl) countEl.textContent = `${this.allResults.length}件`;
+            }
+
+            if (matchedCount === 0 && this.currentContinuation && (currentFilter === "video" || currentFilter === "short")) {
+                await this.search(true);
+                return;
+            }
         } else if (!isLoadMore) {
-            grid.innerHTML = '<div class="no-results">No results found. Try a different search.</div>';
+            grid.innerHTML = '<div class="no-results">🔍 コンテンツが見つかりませんでした。</div>';
         }
 
-        DebugManager.updateStats();
-    }
+        if (loadMore) {
+            loadMore.textContent = "さらに読み込む";
+            loadMore.style.display = this.currentContinuation ? "block" : "none";
+        }
 
-    // ── Trending ─────────────────────────────────────────────
+        if (typeof DebugManager !== "undefined" && DebugManager.dumpRawDataToToast) {
+            DebugManager.dumpRawDataToToast();
+        }
+    }   
+
     async loadTrending(category = "JP") {
         if (this.trendingLoaded && category === this._lastTrendCategory) return;
         this._lastTrendCategory = category;
@@ -859,10 +879,10 @@ class YouTubeManager {
 
         const grid = document.getElementById("trendingGrid");
         if (!grid) return;
-        grid.innerHTML = '<div class="loading">Loading trending...</div>';
+        grid.innerHTML = '<div class="loading">トレンドを取得中…</div>';
 
-        const queryMap = { JP:"Trending Japan", music:"Music Ranking", gaming:"Gaming Popular", news:"Latest News" };
-        const q = queryMap[category] || "Trending";
+        const queryMap = { JP:"トレンド 日本", music:"音楽 ランキング", gaming:"ゲーム 人気", news:"ニュース 最新" };
+        const q = queryMap[category] || "トレンド";
         const data = await DebugManager.fetch(`${WORKER_URL}?q=${YouTubeManager.enc(q)}`);
         grid.innerHTML = "";
 
@@ -880,11 +900,10 @@ class YouTubeManager {
                 grid.appendChild(card);
             });
         } else {
-            grid.innerHTML = '<div class="no-results">Could not load trending.</div>';
+            grid.innerHTML = '<div class="no-results">トレンドを取得できませんでした。</div>';
         }
     }
 
-    // ── Channel ──────────────────────────────────────────────
     async openChannel(handle, displayName, isSubTabClick = false) {
         const tabBtn  = document.getElementById("channelTab");
         const tabLabel = document.getElementById("channelTabLabel");
@@ -902,7 +921,7 @@ class YouTubeManager {
             this.currentChannelId = handle;
         }
 
-        grid.innerHTML = '<div class="loading">Loading channel...</div>';
+        grid.innerHTML = '<div class="loading">チャンネルをロード中…</div>';
         this.channelIds.clear();
         this.currentChannelContinuation = null;
 
@@ -923,7 +942,7 @@ class YouTubeManager {
                         <img class="channel-hero-avatar" src="${ch.thumbnail}" onerror="this.style.display='none'">
                         <div class="channel-hero-info">
                             <div class="channel-hero-name">${YouTubeManager.esc(ch.title)}</div>
-                            <div class="channel-hero-sub">${YouTubeManager.esc(ch.publishedText || "Channel")}</div>
+                            <div class="channel-hero-sub">${YouTubeManager.esc(ch.publishedText || "チャンネル")}</div>
                         </div>
                     `;
                 }
@@ -932,7 +951,7 @@ class YouTubeManager {
             this.renderItems(data.results, grid, this.channelIds);
             if (loadMore) loadMore.style.display = this.currentChannelContinuation ? "block" : "none";
         } else {
-            grid.innerHTML = '<div class="no-results">No channel content found.</div>';
+            grid.innerHTML = '<div class="no-results">チャンネルのコンテンツが見つかりませんでした。</div>';
             if (loadMore) loadMore.style.display = "none";
         }
         DebugManager.updateStats();
@@ -942,16 +961,44 @@ class YouTubeManager {
         if (!this.currentChannelContinuation) return;
         const grid = document.getElementById("channelResultsGrid");
         const loadMore = document.getElementById("channelLoadMoreBtn");
-        if (loadMore) loadMore.textContent = "Loading...";
+        if (loadMore) loadMore.textContent = "読み込み中…";
 
         const url = `${WORKER_URL}?continuation=${YouTubeManager.enc(this.currentChannelContinuation)}&type=browse`;
         const data = await DebugManager.fetch(url);
+        
         if (data?.results) {
             this.currentChannelContinuation = data.continuation || null;
+            const currentFilter = this.currentFilter;
+            
+            const matchedCount = data.results.filter(item => {
+                if (item.type === "channel") return true;
+                
+                let isShort = !!item.isShort || 
+                              String(item.title).toLowerCase().includes("#shorts") || 
+                              String(item.title).toLowerCase().includes("#ショート") ||
+                              String(item.title).toLowerCase().includes("ショート動画") ||
+                              String(item.title).toLowerCase().includes("#縦型");
+                if (item.duration) {
+                    const parts = item.duration.split(':');
+                    if (parts.length === 2 && (parseInt(parts[0], 10) === 0 || parseInt(parts[0], 10) === 1 || (parseInt(parts[0], 10) === 2 && parseInt(parts[1], 10) < 30))) {
+                        isShort = true;
+                    }
+                }
+                const itemType = isShort ? "short" : "video";
+                
+                return currentFilter === "all" || itemType === currentFilter;
+            }).length;
+
             this.renderItems(data.results, grid, this.channelIds);
+
+            if (matchedCount === 0 && this.currentChannelContinuation && (currentFilter === "video" || currentFilter === "short")) {
+                await this.loadMoreChannel();
+                return;
+            }
         }
+
         if (loadMore) {
-            loadMore.textContent = "Load More";
+            loadMore.textContent = "さらに読み込む";
             loadMore.style.display = this.currentChannelContinuation ? "block" : "none";
         }
     }
@@ -989,20 +1036,28 @@ class YouTubeManager {
         });
     }
 
-    // ── Render ───────────────────────────────────────────────
     renderItems(items, grid, idSet, isSearch = false) {
         const noAnim = !Storage.get("cardAnimEnabled", true);
+
         items.forEach(item => {
             const key = item.type === "channel" ? item.channelId : item.videoId;
             if (!key || idSet.has(key)) return;
-            idSet.add(key);
 
+            if (item.type !== "channel" && this.currentChannelTab === "videos") {
+                item.isShort = false; 
+            } 
+            else if (item.type !== "channel" && this.currentChannelTab === "shorts") {
+                item.isShort = true;
+            }
+
+            idSet.add(key);
             const card = this.buildCard(item, idSet, isSearch, noAnim);
             if (card) grid.appendChild(card);
         });
+
+        this.applyFilter();
     }
 
-    // 【FIX】Improved Live/Short Detection Logic
     buildCard(item, idSet, isSearch, noAnim) {
         const card = document.createElement("div");
         card.className = "video-card" + (noAnim ? " no-anim" : "");
@@ -1015,14 +1070,13 @@ class YouTubeManager {
                 </div>
                 <div class="card-info" style="text-align:center;">
                     <div class="card-title">${YouTubeManager.esc(item.title)}</div>
-                    <div class="card-meta">${YouTubeManager.esc(item.publishedText || "Channel")}</div>
+                    <div class="card-meta">${YouTubeManager.esc(item.publishedText || "チャンネル")}</div>
                 </div>
             `;
             card.onclick = () => this.openChannel(item.channelId, item.title);
             return card;
         }
 
-        // --- Data attributes (views, date) ---
         let rawViews = 0;
         if (item.viewCount) {
             rawViews = parseInt(item.viewCount, 10);
@@ -1032,31 +1086,34 @@ class YouTubeManager {
         card.dataset.views = rawViews;
         card.dataset.date  = item.uploadDate || item.publishedText || "0";
 
-        // --- Type detection (video / short / live) - IMPROVED ---
         let type = "video";
         
-        // Check for Short videos
-        const isShort = !!item.isShort || 
-                       (item.duration && 
-                        item.duration.includes(":") &&
-                        (() => {
-                            const parts = item.duration.split(":");
-                            if (parts.length === 2) {
-                                const mins = parseInt(parts[0], 10) || 0;
-                                const secs = parseInt(parts[1], 10) || 0;
-                                return mins === 0 && secs > 0 && secs <= 60;
-                            }
-                            return false;
-                        })());
-        
-        // Check for Live videos
-        const pubText = String(item.publishedText || "").toLowerCase();
-        const durationStr = String(item.duration || "").toUpperCase();
+        const isVertical = !!item.isShort || 
+                           String(item.title).toLowerCase().includes("#shorts") || 
+                           String(item.title).toLowerCase().includes("#ショート") ||
+                           String(item.title).toLowerCase().includes("ショート動画") ||
+                           String(item.title).toLowerCase().includes("#縦型");
+
+        let isUnderTwoAndHalfMinutes = false;
+        if (item.duration) {
+            const parts = item.duration.split(':');
+            if (parts.length === 2) {
+                const minutes = parseInt(parts[0], 10);
+                const seconds = parseInt(parts[1], 10);
+                if (minutes === 0 || minutes === 1) {
+                    isUnderTwoAndHalfMinutes = true;
+                } 
+                else if (minutes === 2 && seconds < 30) {
+                    isUnderTwoAndHalfMinutes = true;
+                }
+            }
+        }
+
+        const isShort = isVertical || isUnderTwoAndHalfMinutes;
+
         const isLive = !!item.isLive || 
-                      pubText.includes("live") || 
-                      durationStr.includes("LIVE") ||
-                      pubText.includes("now") ||
-                      item.isLiveArchive === true;
+                       String(item.publishedText).includes("ライブ") || 
+                       String(item.duration).includes("LIVE");
         
         if (isShort) {
             type = "short";
@@ -1064,7 +1121,7 @@ class YouTubeManager {
             type = "live";
         }
         card.dataset.type = type;
-
+        
         const canClick = item.channel && item.channel !== "Unknown" && item.channel !== "Channel Video";
         const isFav    = FavoritesManager.isFav(item.videoId);
 
@@ -1074,11 +1131,11 @@ class YouTubeManager {
                 ${type === "short" ? '<span class="badge shorts-badge">SHORTS</span>' : ""}
                 ${type === "live" ? '<span class="badge live-badge" style="background:#e54848 !important;">LIVE</span>' : ""}
                 ${item.duration && type !== "live" ? `<span class="duration-badge">${item.duration}</span>` : ""}
-                <div class="card-fav-dot${isFav?" active":""}" data-id="${item.videoId}">Fav</div>
+                <div class="card-fav-dot${isFav?" active":""}" data-id="${item.videoId}">⭐</div>
                 <div class="card-overlay">
-                    <button class="overlay-btn play-btn" title="Play">Play</button>
-                    <button class="overlay-btn queue-btn" title="Queue">Queue</button>
-                    <button class="overlay-btn fav-btn" title="Favorites">${isFav?"Fav":"Add"}</button>
+                    <button class="overlay-btn play-btn" title="再生">▶</button>
+                    <button class="overlay-btn queue-btn" title="キューに追加">📋</button>
+                    <button class="overlay-btn fav-btn" title="お気に入り">${isFav?"★":"☆"}</button>
                 </div>
             </div>
             <div class="card-info">
@@ -1106,7 +1163,7 @@ class YouTubeManager {
             e.stopPropagation();
             FavoritesManager.toggle({ id:item.videoId, title:item.title });
             const btn = e.target;
-            btn.textContent = FavoritesManager.isFav(item.videoId) ? "Fav" : "Add";
+            btn.textContent = FavoritesManager.isFav(item.videoId) ? "★" : "☆";
         };
 
         card.addEventListener("contextmenu", (e) => {
@@ -1119,73 +1176,84 @@ class YouTubeManager {
     }
 }
 
-// =============================================================
-//  DEBUG MANAGER
-// =============================================================
 class DebugManager {
+    static history = [];
+
     static init() {
-        const header  = document.getElementById("debugHeader");
-        const btn     = document.getElementById("debugToggleBtn");
-        const reload  = document.getElementById("dbBtnReloadStorage");
-
-        if (header) {
-            header.onclick = () => {
-                const panel = document.getElementById("debugPanel");
-                panel?.classList.toggle("collapsed");
-                if (btn) btn.textContent = panel?.classList.contains("collapsed") ? "+" : "-";
-            };
-        }
-
-        reload?.addEventListener("click", () => {
-            const pre = document.getElementById("debugStorageJson");
-            if (!pre) return;
-            const snap = {
-                favorites: Storage.get("favorites",[]).length,
-                history:   Storage.get("history",[]).length,
-                queue:     Storage.get("queue",[]).length,
-                theme:     Storage.get("theme","midnight"),
-            };
-            pre.textContent = JSON.stringify(snap, null, 2);
-        });
+        Toast.show("🚀 DebugManager: Toastモードで起動完了");
     }
 
     static async fetch(url) {
-        const box = document.getElementById("debugNetLogs");
-        const item = document.createElement("div");
-        item.className = "debug-log-item";
-        item.textContent = `-> ${url.replace(WORKER_URL,"").substring(0,50)}`;
-        box?.appendChild(item);
-        if (box && box.children.length > 30) box.firstChild.remove();
         try {
             const r = await fetch(url);
             const d = await r.json();
-            item.textContent += " OK";
-            item.classList.add("ok");
+
+            if (d?.results) {
+                this.history.push(...d.results);
+                Toast.show(`📡 データ受信: ${d.results.length}件の動画`, "success");
+            }
             return d;
         } catch(e) {
-            item.textContent += " ERR";
-            item.classList.add("err");
+            Toast.show("❌ 通信エラーが発生しました", "danger");
             return null;
         }
     }
 
-    static updateStats() {
-        const wins = document.querySelectorAll(".pip-window").length;
-        const fav   = Storage.get("favorites",[]).length;
-        const queue = Storage.get("queue",[]).length;
+    static updateStats() {}
 
-        const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
-        set("dbActiveWins", wins);
-        set("dbFavCount",   fav);
-        set("dbQueueLen",   queue);
+    static dumpRawDataToToast() {
+        try {
+            const results = this.history.length ? this.history : (window.ui?.allResults || []);
+            if (!results || results.length === 0) {
+                Toast.show("⚠️ 検検証できるデータがまだありません。", "warning");
+                return;
+            }
 
-        WindowManager._updateSidebar?.();
+            const validItems = results.filter(v => v && v.videoId && typeof v.title === "string");
+            
+            if (validItems.length === 0) {
+                Toast.show("⚠️ 有効な動画データが履歴に見つかりません。", "warning");
+                return;
+            }
+
+            const uniqueItems = Array.from(
+                new Map(validItems.map(item => [item.videoId, item])).values()
+            ).slice(0, 3);
+
+            Toast.show(`📊 取得データ検証（最新${uniqueItems.length}件）`, "success");
+
+            uniqueItems.forEach((v, idx) => {
+                const title = v.title || "No Title";
+                const duration = v.duration || "時間不明";
+                
+                let isShortReason = "通常動画(2分半以上)";
+                
+                const parts = duration.split(':');
+                if (parts.length === 2) {
+                    const m = parseInt(parts[0], 10);
+                    const s = parseInt(parts[1], 10);
+                    if (m === 0 || m === 1 || (m === 2 && s < 30)) {
+                        isShortReason = "🔴 2分半未満（縦型疑惑）";
+                    }
+                } else if (parts.length === 1) {
+                    isShortReason = "🔴 1分未満（ショート確定）";
+                }
+                
+                if (v.isShort || title.toLowerCase().includes("#shorts") || title.toLowerCase().includes("#ショート")) {
+                    isShortReason = "🔴 ショート判定（タグ・フラグ）";
+                }
+
+                setTimeout(() => {
+                    Toast.show(`[${idx + 1}] ⏱【${duration}】: ${isShortReason} | ${title.substring(0, 15)}...`, "info");
+                }, (idx + 1) * 400);
+            });
+        } catch (err) {
+            console.error("Toast Debug Error:", err);
+            Toast.show("❌ トースト検証中にエラーが発生", "danger");
+        }
     }
 }
 
-// =============================================================
-//  KEYBOARD MANAGER
-// =============================================================
 class KeyboardManager {
     static focused = -1;
 
@@ -1258,9 +1326,6 @@ class KeyboardManager {
     }
 }
 
-// =============================================================
-//  TAB MANAGER
-// =============================================================
 class TabManager {
     static init(yt) {
         document.querySelectorAll(".nav-tabs .tab").forEach(tab => {
@@ -1290,9 +1355,6 @@ class TabManager {
     }
 }
 
-// =============================================================
-//  INIT
-// =============================================================
 document.addEventListener("DOMContentLoaded", () => {
     const yt = new YouTubeManager();
 
@@ -1302,7 +1364,6 @@ document.addEventListener("DOMContentLoaded", () => {
     yt.initFilterPills();
     KeyboardManager.init(yt);
     ContextMenu.init();
-    DebugManager.init();
 
     new WaveEngine();
     new ParticleEngine();
@@ -1341,7 +1402,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("autoplayToggle")?.addEventListener("change", e => Storage.set("autoplayEnabled", e.target.checked));
 
-    // Sort functionality with improved filtering
     document.querySelectorAll(".sort-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
@@ -1353,7 +1413,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const sortType = btn.dataset.sort;
 
             if (sortType === "default") {
-                Toast.show("Refresh search to re-sort");
+                Toast.show("🔃 関連順は再検索してください");
                 return;
             }
 
@@ -1372,15 +1432,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             grid.innerHTML = "";
             cards.forEach(card => grid.appendChild(card));
-            Toast.show(`Sorted: ${btn.textContent}`, "success");
+            Toast.show(`🔃 並べ替えを適用しました（${btn.textContent}）`, "success");
         });
     });
 
     FavoritesManager.render();
     HistoryManager.render();
     QueueManager.render();
-    DebugManager.updateStats();
-    Translator.init();
+    
+    if (typeof Translator !== "undefined" && Translator.init) Translator.init();
 
     const winSizeSel = document.getElementById("windowSizeSelect");
     const maxWinSel  = document.getElementById("maxWindowsSelect");
@@ -1388,11 +1448,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (winSizeSel)  winSizeSel.value  = Storage.get("windowSize", "medium");
     if (maxWinSel)   maxWinSel.value   = Storage.get("maxWindows", 5);
     if (autoSel)     autoSel.checked   = Storage.get("autoplayEnabled", true);
-    
-    const waveCanvas = document.getElementById("waveCanvas");
-    const particleCanvas = document.getElementById("particleCanvas");
-    if (waveCanvas && !Storage.get("waveEnabled",true)) waveCanvas.style.display="none";
-    if (particleCanvas && !Storage.get("particleEnabled",true)) particleCanvas.style.display="none";
 
-    Toast.show("Midnight Loaded", "success");
+    DebugManager.init();
+    DebugManager.updateStats();
+    
+    Toast.show("✨ Midnight System Ready");
 });
