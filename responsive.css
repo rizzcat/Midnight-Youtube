@@ -1,31 +1,96 @@
-@media (min-width: 1440px) {
-    .results-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
-}
+/* ============================================================
+   Midnight YouTube V9 — responsive.css
+   ============================================================ */
 
-@media (max-width: 1439px) {
-    .results-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+@media (min-width: 1600px) {
+    .results-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 }
-
+@media (max-width: 1440px) {
+    .results-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+}
+@media (max-width: 1200px) {
+    :root { --sidebar-w: 260px; }
+    .content { padding: 20px; }
+    .kbd-hints { display: none; }
+}
 @media (max-width: 1024px) {
-    :root { --sidebar-width: 260px; }
-    .content { padding: 18px; }
-    .results-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    :root { --sidebar-w: 240px; }
+    .content { padding: 16px; }
+    .results-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .search-filter-pills { display: none; }
 }
 
+/* ── Tablet ── */
 @media (max-width: 768px) {
     body { overflow: auto; }
     #app { flex-direction: column; }
-    .sidebar { position: sticky; top: 0; width: 100%; height: auto; border-right: none; border-bottom: 1px solid #22263b; padding: 15px; }
-    .nav-tabs { flex-direction: row; overflow-x: auto; gap: 8px; }
-    .tab { min-width: max-content; padding: 10px 14px; font-size: 13px; }
-    .content { padding: 14px; height: calc(100vh - 140px); overflow-y: auto; }
+
+    .sidebar {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        padding: 12px 14px;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        z-index: 100;
+    }
+    .logo { flex-shrink: 0; }
+    .logo-text { display: none; }
+    .mini-status { display: none !important; }
+    .kbd-hints { display: none; }
+    .nav-tabs {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 4px;
+        flex: 1;
+        -webkit-overflow-scrolling: touch;
+    }
+    .tab { min-width: max-content; padding: 8px 12px; font-size: 13px; }
+    .tab span { display: none; }
+
+    .content { padding: 12px; }
     .search-bar { flex-direction: column; gap: 8px; }
-    .search-bar button { padding: 12px; }
-    .results-grid { grid-template-columns: 1fr; }
-    .pip-window { width: 90% !important; left: 5% !important; right: 5% !important; height: auto; aspect-ratio: 16/10; }
+    .search-btn { height: 44px; }
+    .results-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+    .sort-bar { display: none !important; }
+
+    .pip-window {
+        width: 92% !important;
+        left: 4% !important;
+        height: auto !important;
+        aspect-ratio: 16 / 10;
+        bottom: 10px;
+        top: auto !important;
+    }
+
+    .debug-panel { width: 280px; right: 10px; bottom: 10px; }
+    .settings-panel { max-width: 100%; }
+    .channel-hero { flex-direction: column; text-align: center; }
 }
 
+/* ── Mobile ── */
 @media (max-width: 480px) {
-    .logo { font-size: 18px; }
-    .ultra-badge { font-size: 8px; }
+    .logo-icon { font-size: 20px; }
+    .ultra-badge { display: none; }
+    .results-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card-info { padding: 8px; }
+    .card-title { font-size: 12px; }
+    .tab-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .queue-item { padding: 8px; }
+    .queue-thumb { width: 48px; height: 28px; }
+}
+
+@media (max-width: 360px) {
+    .results-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    #waveCanvas, #particleCanvas { display: none !important; }
 }
