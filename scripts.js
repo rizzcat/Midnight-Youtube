@@ -1364,5 +1364,5 @@ document.addEventListener("DOMContentLoaded", () => {
     if (waveCanvas && !Storage.get("waveEnabled",true)) waveCanvas.style.display="none";
     if (particleCanvas && !Storage.get("particleEnabled",true)) particleCanvas.style.display="none";
 
-    Toast.show("🌙 Midnight YouTube V9 起動完了 🚀", "success");
+    Toast.show("🌙 Midnight Init Done", "success");
 });
