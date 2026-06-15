@@ -1351,6 +1351,7 @@ document.addEventListener("DOMContentLoaded", () => {
     HistoryManager.render();
     QueueManager.render();
     DebugManager.updateStats();
+    Translator.init();
 
     const winSizeSel = document.getElementById("windowSizeSelect");
     const maxWinSel  = document.getElementById("maxWindowsSelect");

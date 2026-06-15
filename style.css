@@ -244,3 +244,95 @@ html, body { width:100%; height:100%; font-family: -apple-system, BlinkMacSystem
 /* ── Theme Global Rules ── */
 .tab.active, .search-btn, .pill.active, .load-more-btn:hover, .sub-tab.active, .overlay-btn:hover { background: var(--accent) !important; }
 .video-card:hover, .pip-window { border-color: var(--accent); }
+
+/* ── Settings Panel & Groups ── */
+.settings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 800px; /* 横に広がりすぎないように制限 */
+    width: 100%;
+}
+
+.setting-group {
+    background: var(--panel);
+    border: 1px solid var(--panel2);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.setting-group h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--panel2);
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+}
+
+.setting-group p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* 項目を綺麗に左右横並びにする（左にラベル、右にフォーム） */
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    gap: 24px;
+    padding: 6px 0;
+}
+
+.setting-row label {
+    font-size: 14px;
+    color: var(--text2);
+    font-weight: 500;
+}
+
+/* ── Form Controls (セレクトボックス等) ── */
+.setting-select {
+    background: var(--panel2);
+    border: 1px solid var(--panel3);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    min-width: 200px;
+    cursor: pointer;
+    transition: var(--tr);
+    /* ブラウザ標準の矢印をカスタム（任意） */
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.setting-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+/* ── Checkboxes & Color Pickers (モダン化) ── */
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent); /* チェック時の色をテーマの紫にする */
+    cursor: pointer;
+}
+
+input[type="color"] {
+    border: none;
+    background: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; /* 丸型にする */
+    overflow: hidden;
+}
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: 1px solid var(--panel3); border-radius: 50%; }

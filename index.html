@@ -177,25 +177,25 @@
       <div id="historyGrid" class="results-grid"></div>
     </section>
 
-    <section id="settingsTab" class="tab-content">
+<section id="settingsTab" class="tab-content">
       <div class="settings-panel">
         
         <div class="setting-group">
-          <h4>🎨 外観・テーマデザイン</h4>
+          <h4 data-i18n="set_title_appearance">🎨 外観・テーマデザイン</h4>
           <div class="setting-row">
-            <label>ベーステーマ</label>
+            <label data-i18n="set_base_theme">ベーステーマ</label>
             <select id="themeSelect" class="setting-select">
-              <option value="midnight">Midnight Deep (標準)</option>
-              <option value="oled">Absolute OLED (漆黒)</option>
-              <option value="cyber">Cyber Neon (サイバー)</option>
-              <option value="glass">Frosted Glass (ガラス調)</option>
-              <option value="aurora">Northern Aurora (オーロラ)</option>
-              <option value="rose">Velvet Rose (ローズ)</option>
-              <option value="rainbow">Dynamic Rainbow (虹色)</option>
+              <option value="midnight" data-i18n="theme_midnight">Midnight Deep (標準)</option>
+              <option value="oled" data-i18n="theme_oled">Absolute OLED (漆黒)</option>
+              <option value="cyber" data-i18n="theme_cyber">Cyber Neon (サイバー)</option>
+              <option value="glass" data-i18n="theme_glass">Frosted Glass (ガラス調)</option>
+              <option value="aurora" data-i18n="theme_aurora">Northern Aurora (オーロラ)</option>
+              <option value="rose" data-i18n="theme_rose">Velvet Rose (ローズ)</option>
+              <option value="rainbow" data-i18n="theme_rainbow">Dynamic Rainbow (虹色)</option>
             </select>
           </div>
           <div class="setting-row">
-            <label>カスタムアクセントカラー</label>
+            <label data-i18n="set_accent_color">カスタムアクセントカラー</label>
             <div style="display:flex; align-items:center; gap:10px;">
               <span id="accentHexLabel" style="font-size:12px; font-family:monospace; color:var(--muted);">#7c5cff</span>
               <input type="color" id="accentColorPicker" value="#7c5cff" style="border:none; background:none; cursor:pointer; width:32px; height:32px;">
@@ -204,58 +204,58 @@
         </div>
 
         <div class="setting-group">
-          <h4>🪟 プレイヤーウィンドウ制御</h4>
+          <h4 data-i18n="set_title_player">🪟 プレイヤーウィンドウ制御</h4>
           <div class="setting-row">
-            <label>デフォルトのウィンドウサイズ</label>
+            <label data-i18n="set_window_size">デフォルトのウィンドウサイズ</label>
             <select id="windowSizeSelect" class="setting-select">
-              <option value="small">コンパクト (400x260)</option>
-              <option value="medium" selected>スタンダード (520x330)</option>
-              <option value="large">シアター (700x430)</option>
+              <option value="small" data-i18n="size_small">コンパクト (400x260)</option>
+              <option value="medium" selected data-i18n="size_medium">スタンダード (520x330)</option>
+              <option value="large" data-i18n="size_large">シアター (700x430)</option>
             </select>
           </div>
           <div class="setting-row">
-            <label>最大同時起動数</label>
+            <label data-i18n="set_max_windows">最大同時起動数</label>
             <select id="maxWindowsSelect" class="setting-select">
-              <option value="3">3 ウィンドウ</option>
-              <option value="5" selected>5 ウィンドウ</option>
-              <option value="10">10 ウィンドウ</option>
-              <option value="0">制限なし (非推奨)</option>
+              <option value="3" data-i18n="wins_3">3 ウィンドウ</option>
+              <option value="5" selected data-i18n="wins_5">5 ウィンドウ</option>
+              <option value="10" data-i18n="wins_10">10 ウィンドウ</option>
+              <option value="0" data-i18n="wins_unlimited">制限なし (非推奨)</option>
             </select>
           </div>
           <div class="setting-row">
-            <label>ウィンドウ展開時に自動再生する</label>
+            <label data-i18n="set_autoplay">ウィンドウ展開時に自動再生する</label>
             <input type="checkbox" id="autoplayToggle" checked>
           </div>
         </div>
 
         <div class="setting-group">
-          <h4>✨ バックグラウンド・エフェクト設定</h4>
+          <h4 data-i18n="set_title_effects">✨ バックグラウンド・エフェクト設定</h4>
           <div class="setting-row">
-            <label>流体ウェーブアニメーションを有効化</label>
+            <label data-i18n="set_wave_anim">流体ウェーブアニメーションを有効化</label>
             <input type="checkbox" id="waveToggle" checked>
           </div>
           <div class="setting-row">
-            <label>浮遊パーティクルエフェクトを有効化</label>
+            <label data-i18n="set_particle_effect">浮遊パーティクルエフェクトを有効化</label>
             <input type="checkbox" id="particleToggle" checked>
           </div>
           <div class="setting-row">
-            <label>カードホバー時の滑らかなアニメーション効果</label>
+            <label data-i18n="set_card_anim">カードホバー時の滑らかなアニメーション効果</label>
             <input type="checkbox" id="cardAnimToggle" checked>
           </div>
         </div>
 
         <div class="setting-group">
-          <h4>⚙️ システムデバッガー設定</h4>
+          <h4 data-i18n="set_title_debug">⚙️ システムデバッガー設定</h4>
           <div class="setting-row">
-            <label>画面右下のデバッグパネルを完全に非表示にする</label>
+            <label data-i18n="set_hide_debug">画面右下のデバッグパネルを完全に非表示にする</label>
             <input type="checkbox" id="debugToggleSetting">
           </div>
         </div>
 
         <div class="setting-group" style="border-color:rgba(229,72,72,0.2); background:rgba(229,72,72,0.02);">
-          <h4 style="color:var(--danger);">⚠️ 危険領域</h4>
-          <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">ブラウザのLocalStorageに保存されている設定、お気に入り、キュー、履歴など、すべてのアプリケーションデータを即座に全削除します。</p>
-          <button id="resetAllBtn" class="sort-btn danger" style="border:1px solid var(--danger); color:var(--danger); padding:10px 20px; font-weight:600;">すべてのデータを完全リセット</button>
+          <h4 style="color:var(--danger);" data-i18n="set_title_danger">⚠️ 危険領域</h4>
+          <p style="font-size:12px; color:var(--muted); margin-bottom:12px;" data-i18n="set_danger_desc">ブラウザのLocalStorageに保存されている設定、お気に入り、キュー、履歴など、すべてのアプリケーションデータを即座に全削除します。</p>
+          <button id="resetAllBtn" class="sort-btn danger" style="border:1px solid var(--danger); color:var(--danger); padding:10px 20px; font-weight:600;" data-i18n="set_reset_btn">すべてのデータを完全リセット</button>
         </div>
 
       </div>
