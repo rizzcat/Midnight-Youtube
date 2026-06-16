@@ -13,6 +13,18 @@
 const WORKER_URL = "https://silent-mouse-5878.78q38gs6.workers.dev/";
 const APP_VERSION = "10.0";
 
+//about:blank()
+function aboutblank() {
+        let url = window.location.href;
+        var w = window.open("about:blank", "_blank");
+        w.document.write(
+          '<iframe style="position: absolute;top: 0px;bottom: 0px;right: 0px;width: 100%;border: none;margin: 0;padding: 0;overflow: hidden;z-index: 99999;height: 100%;" src="' +
+            url +
+            '"></iframe>',
+        );
+        w.document.close();
+      }
+
 // ---------- Icon helper ----------
 function icon(name, extraClass = "") {
     return `<svg class="icon ${extraClass}"><use href="#icon-${name}"/></svg>`;
