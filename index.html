@@ -43,6 +43,9 @@
   <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
   </symbol>
+  <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>
+  </symbol>
 </svg>
 
 <div id="app">
@@ -74,7 +77,14 @@
       <div class="tab" data-tab="settings" data-i18n="tab_settings">
         <svg class="icon"><use href="#icon-settings"/></svg>設定
       </div>
+      <div class="tab" data-tab="about" data-i18n="tab_about">
+        <svg class="icon"><use href="#icon-info"/></svg>情報
+      </div>
     </nav>
+
+    <div class="rotating-text-box">
+      <span class="rotating-text">Midnight</span>
+    </div>
 
     <div class="lang-switch-box">
       <button class="lang-btn" data-lang="ja">JP</button>
@@ -87,7 +97,7 @@
     <section id="searchTab" class="tab-content active">
       <div class="top-header" style="padding:0; margin-bottom:24px;">
         <div class="search-bar">
-          <input type="text" id="searchInput" placeholder="キーワード、@ハンドル、またはチャンネルID...">
+          <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="キーワード、@ハンドル、またはチャンネルID...">
           <button id="clearSearchBtn" class="clear-search-btn">
             <svg class="icon" style="width:14px; height:14px;"><use href="#icon-close"/></svg>
           </button>
@@ -110,24 +120,24 @@
           <div class="sort-btns">
             <button class="sort-btn active" data-sort="default" data-i18n="sort_default">関連度順</button>
             <button class="sort-btn" data-sort="views" data-i18n="sort_views">視聴回数順</button>
-            <button class="sort-btn" data-sort="date" data-i18n="sort="date" data-i18n="sort_date">投稿日順</button>
+            <button class="sort-btn" data-sort="date" data-i18n="sort_date">投稿日順</button>
           </div>
         </div>
       </div>
 
       <div id="searchResultsGrid" class="results-grid">
-        <div class="no-results">検索バーにキーワードを入力して探してみましょう。</div>
+        <div class="no-results" data-i18n="no_results_search">検索バーにキーワードを入力して探してみましょう。</div>
       </div>
-      <button id="loadMoreBtn" class="load-more-btn" style="display:none;" data-i18n="load_more">さらに読み込む</button>
+      <button id="loadMoreBtn" class="load-more-btn" style="display:none;" data-i18n="btn_load_more">さらに読み込む</button>
     </section>
 
     <section id="trendingTab" class="tab-content">
       <div class="filter-container">
         <div class="pills-row trending-category-pills">
-          <button class="pill active" data-trend="JP">総合 (日本)</button>
-          <button class="pill" data-trend="music">音楽</button>
-          <button class="pill" data-trend="gaming">ゲーム</button>
-          <button class="pill" data-trend="news">ニュース</button>
+          <button class="pill active" data-trend="JP" data-i18n="trending_category_jp">総合 (日本)</button>
+          <button class="pill" data-trend="music" data-i18n="trending_category_music">音楽</button>
+          <button class="pill" data-trend="gaming" data-i18n="trending_category_gaming">ゲーム</button>
+          <button class="pill" data-trend="news" data-i18n="trending_category_news">ニュース</button>
         </div>
       </div>
       <div id="trendingGrid" class="results-grid"></div>
@@ -136,19 +146,19 @@
     <section id="channelTab" class="tab-content">
       <div class="channel-hero" id="channelHeader" style="display:none;"></div>
       <div class="channel-sub-tabs">
-        <button class="sub-tab active" id="channelVideosSubTab">動画</button>
-        <button class="sub-tab" id="channelShortsSubTab">ショート</button>
+        <button class="sub-tab active" id="channelVideosSubTab" data-i18n="channel_videos">動画</button>
+        <button class="sub-tab" id="channelShortsSubTab" data-i18n="channel_shorts">ショート</button>
       </div>
       <div id="channelResultsGrid" class="results-grid" style="margin-top:20px;"></div>
-      <button id="channelLoadMoreBtn" class="load-more-btn" style="display:none;" data-i18n="load_more">さらに読み込む</button>
+      <button id="channelLoadMoreBtn" class="load-more-btn" style="display:none;" data-i18n="btn_load_more">さらに読み込む</button>
     </section>
 
     <section id="queueTab" class="tab-content">
       <div class="section-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h3 style="font-size:18px; font-weight:700;">再生キュー</h3>
         <div style="display:flex; gap:10px;">
-          <button id="shuffleQueueBtn" class="sort-btn" style="border:1px solid var(--panel3); padding:8px 16px;">シャッフル</button>
-          <button id="clearQueueBtn" class="sort-btn" style="border:1px solid var(--panel3); padding:8px 16px;">すべてクリア</button>
+          <button id="shuffleQueueBtn" class="sort-btn" style="border:1px solid var(--panel3); padding:8px 16px;" data-i18n="btn_queue_shuffle">シャッフル</button>
+          <button id="clearQueueBtn" class="sort-btn" style="border:1px solid var(--panel3); padding:8px 16px;" data-i18n="btn_queue_clear">すべてクリア</button>
           <button id="playAllBtn" class="sort-btn active" style="padding:8px 16px;">すべて連続再生</button>
         </div>
       </div>
@@ -159,8 +169,8 @@
       <div class="section-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h3 style="font-size:18px; font-weight:700;">お気に入りブックマーク</h3>
         <select id="favSortSelect" class="setting-select" style="width:auto; margin:0; height:36px; padding:0 12px;">
-          <option value="added">追加日順</option>
-          <option value="alpha">名前順 (A-Z)</option>
+          <option value="added" data-i18n="opt_fav_date">追加日順</option>
+          <option value="alpha" data-i18n="opt_fav_title">名前順 (A-Z)</option>
         </select>
       </div>
       <div id="favoritesGrid" class="results-grid"></div>
@@ -170,18 +180,18 @@
       <div class="section-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:16px; flex-wrap:wrap;">
         <h3 style="font-size:18px; font-weight:700;">視聴履歴 (最大100件)</h3>
         <div style="display:flex; gap:12px; flex:1; max-width:400px;">
-          <input type="text" id="historySearch" class="setting-select" placeholder="履歴から検索..." style="margin:0; height:36px; padding:0 12px; background:var(--panel);">
-          <button id="clearHistoryBtn" class="sort-btn danger" style="border:1px solid var(--danger); color:var(--danger); padding:0 16px; border-radius:var(--radius-sm); white-space:nowrap;">履歴をクリア</button>
+          <input type="text" id="historySearch" class="setting-select" data-i18n-placeholder="search_placeholder" placeholder="履歴から検索..." style="margin:0; height:36px; padding:0 12px; background:var(--panel);">
+          <button id="clearHistoryBtn" class="sort-btn danger" style="border:1px solid var(--danger); color:var(--danger); padding:0 16px; border-radius:var(--radius-sm); white-space:nowrap;" data-i18n="btn_history_clear">履歴をクリア</button>
         </div>
       </div>
       <div id="historyGrid" class="results-grid"></div>
     </section>
 
-<section id="settingsTab" class="tab-content">
+    <section id="settingsTab" class="tab-content">
       <div class="settings-panel">
         
         <div class="setting-group">
-          <h4 data-i18n="set_title_appearance">🎨 外観・テーマデザイン</h4>
+          <h4 data-i18n="set_title_appearance">外観・テーマデザイン</h4>
           <div class="setting-row">
             <label data-i18n="set_base_theme">ベーステーマ</label>
             <select id="themeSelect" class="setting-select">
@@ -204,7 +214,7 @@
         </div>
 
         <div class="setting-group">
-          <h4 data-i18n="set_title_player">🪟 プレイヤーウィンドウ制御</h4>
+          <h4 data-i18n="set_title_player">プレイヤーウィンドウ制御</h4>
           <div class="setting-row">
             <label data-i18n="set_window_size">デフォルトのウィンドウサイズ</label>
             <select id="windowSizeSelect" class="setting-select">
@@ -229,7 +239,7 @@
         </div>
 
         <div class="setting-group">
-          <h4 data-i18n="set_title_effects">✨ バックグラウンド・エフェクト設定</h4>
+          <h4 data-i18n="set_title_effects">バックグラウンド・エフェクト設定</h4>
           <div class="setting-row">
             <label data-i18n="set_wave_anim">流体ウェーブアニメーションを有効化</label>
             <input type="checkbox" id="waveToggle" checked>
@@ -245,7 +255,7 @@
         </div>
 
         <div class="setting-group">
-          <h4 data-i18n="set_title_debug">⚙️ システムデバッガー設定</h4>
+          <h4 data-i18n="set_title_debug">システムデバッガー設定</h4>
           <div class="setting-row">
             <label data-i18n="set_hide_debug">画面右下のデバッグパネルを完全に非表示にする</label>
             <input type="checkbox" id="debugToggleSetting">
@@ -253,11 +263,36 @@
         </div>
 
         <div class="setting-group" style="border-color:rgba(229,72,72,0.2); background:rgba(229,72,72,0.02);">
-          <h4 style="color:var(--danger);" data-i18n="set_title_danger">⚠️ 危険領域</h4>
+          <h4 style="color:var(--danger);" data-i18n="set_title_danger">危険領域</h4>
           <p style="font-size:12px; color:var(--muted); margin-bottom:12px;" data-i18n="set_danger_desc">ブラウザのLocalStorageに保存されている設定、お気に入り、キュー、履歴など、すべてのアプリケーションデータを即座に全削除します。</p>
           <button id="resetAllBtn" class="sort-btn danger" style="border:1px solid var(--danger); color:var(--danger); padding:10px 20px; font-weight:600;" data-i18n="set_reset_btn">すべてのデータを完全リセット</button>
         </div>
 
+      </div>
+    </section>
+
+    <section id="aboutTab" class="tab-content">
+      <div class="settings-panel">
+        <div class="setting-group">
+          <h4 data-i18n="about_title">情報</h4>
+          <div style="padding: 10px 0; line-height: 1.6;">
+            <p style="font-size: 16px; font-weight: bold; color: var(--accent, #7c5cff); margin-bottom: 8px;" data-i18n="about_product">Midnight YouTube</p>
+            <p style="font-size: 13px; color: var(--muted);" data-i18n="about_version">Version 1.0.0 (2026)</p>
+            <p style="margin-top: 12px; font-size: 14px;" data-i18n="about_desc">Midnight is a custom YouTube front-end player with a sophisticated dark design and smooth animation effects. It features multiple window controls and a convenient queuing function</p>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <h4 data-i18n="about_credit_title">クレジット</h4>
+          <div style="font-size: 14px; line-height: 1.8;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--panel3); padding: 6px 0;">
+              <span data-i18n="about_credit_main">Watch YouTube videos privately and unrestricted. Credit to Norepted(Weaf).</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+              <span><span data-i18n="about_credit_note">Sorry, I used AI...</span><br><br><span data-i18n="about_discord">Discord : ilovetaiwan</span><br><br></span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -268,36 +303,36 @@
 <div id="windowWorkspace" class="window-workspace"></div>
 
 <div id="contextMenu" class="context-menu" style="display:none;">
-  <div class="ctx-item" id="ctxPlay">PLAY</div>
-  <div class="ctx-item" id="ctxQueue">QUEUE</div>
-  <div class="ctx-item" id="ctxFav">FAV</div>
-  <div class="ctx-item" id="ctxCopy">COPY URL</div>
+  <div class="ctx-item" id="ctxPlay" data-i18n="ctx_play">再生</div>
+  <div class="ctx-item" id="ctxQueue" data-i18n="ctx_queue">キューに追加</div>
+  <div class="ctx-item" id="ctxFav" data-i18n="ctx_fav">お気に入り</div>
+  <div class="ctx-item" id="ctxCopy" data-i18n="ctx_copy">URLをコピー</div>
   <div class="ctx-separator"></div>
-  <div class="ctx-item danger" id="ctxClose">CLOSE</div>
+  <div class="ctx-item danger" id="ctxClose" data-i18n="ctx_close">閉じる</div>
 </div>
 
 <div id="debugPanel" class="debug-panel">
   <div class="debug-header" id="debugHeader">
-    <span>DEBUGLOG</span>
+    <span data-i18n="debug_title">DEBUGLOG</span>
     <button id="debugToggleBtn">-</button>
   </div>
   <div class="debug-body">
     <div class="debug-section">
-      <h4>SYSTEM STATE</h4>
-      <div class="debug-row"><span>Search IDs:</span><strong id="dbSearchIds">0</strong></div>
-      <div class="debug-row"><span>Channel IDs:</span><strong id="dbChannelIds">0</strong></div>
-      <div class="debug-row"><span>Active Wins:</span><strong id="dbActiveWins">0</strong></div>
-      <div class="debug-row"><span>Queue Len:</span><strong id="dbQueueLen">0</strong></div>
-      <div class="debug-row"><span>Fav Count:</span><strong id="dbFavCount">0</strong></div>
+      <h4 data-i18n="debug_system">SYSTEM STATE</h4>
+      <div class="debug-row"><span data-i18n="debug_search_ids">Search IDs:</span><strong id="dbSearchIds">0</strong></div>
+      <div class="debug-row"><span data-i18n="debug_channel_ids">Channel IDs:</span><strong id="dbChannelIds">0</strong></div>
+      <div class="debug-row"><span data-i18n="debug_active_wins">Active Wins:</span><strong id="dbActiveWins">0</strong></div>
+      <div class="debug-row"><span data-i18n="debug_queue_len">Queue Len:</span><strong id="dbQueueLen">0</strong></div>
+      <div class="debug-row"><span data-i18n="debug_fav_count">Fav Count:</span><strong id="dbFavCount">0</strong></div>
     </div>
     <div class="debug-section">
-      <h4>NETWORK LOGS</h4>
+      <h4 data-i18n="debug_network">NETWORK LOGS</h4>
       <div id="debugNetLogs" class="debug-logs-box"></div>
     </div>
     <div class="debug-section">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <h4>STORAGE SNAPSHOT</h4>
-        <button id="dbBtnReloadStorage" style="background:var(--panel3); border:none; color:var(--text); padding:2px 8px; font-size:10px; cursor:pointer; border-radius:4px;">RELOAD</button>
+        <h4 data-i18n="debug_storage">STORAGE SNAPSHOT</h4>
+        <button id="dbBtnReloadStorage" style="background:var(--panel3); border:none; color:var(--text); padding:2px 8px; font-size:10px; cursor:pointer; border-radius:4px;" data-i18n="debug_reload">RELOAD</button>
       </div>
       <pre id="debugStorageJson" class="debug-storage-pre">{ click reload }</pre>
     </div>

@@ -14,7 +14,21 @@ class Storage {
 }
 
 class Toast {
-    static show(message, type = "default", duration = 700) {
+    static show(message, type = "default", duration = 600) {
+        const container = document.getElementById("toastContainer");
+        if (!container) return;
+        const toast = document.createElement("div");
+        toast.className = `toast${type !== "default" ? " " + type : ""}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = "none";
+            toast.style.opacity = "0";
+            toast.style.transition = "opacity .3s";
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+    static showLong(message, type = "default", duration = 2500) {
         const container = document.getElementById("toastContainer");
         if (!container) return;
         const toast = document.createElement("div");
@@ -64,10 +78,11 @@ class ThemeManager {
         this.toggleDebug(!saved.hideDbg);
 
         themeSelect?.addEventListener("change", () => {
-            this.apply(themeSelect.value, accentPicker.value);
-            Storage.set("theme", themeSelect.value);
-            Toast.show(`🎨 テーマ → ${themeSelect.value.toUpperCase()}`);
-        });
+    this.apply(themeSelect.value, accentPicker.value);
+    Storage.set("theme", themeSelect.value);
+    // 修正：翻訳関数を使用
+    Toast.show(`${Translator.t("toast_theme_changed")}${themeSelect.value.toUpperCase()}`);
+});
 
         accentPicker?.addEventListener("input", (e) => {
             this.apply(themeSelect.value, e.target.value);
@@ -100,11 +115,13 @@ class ThemeManager {
         });
 
         resetBtn?.addEventListener("click", () => {
-            if (!confirm("全データ（お気に入り、履歴、設定）を削除しますか？")) return;
-            localStorage.clear();
-            Toast.show("🗑 全データをリセットしました", "danger");
-            setTimeout(() => location.reload(), 1000);
-        });
+    // 修正：翻訳関数を使用
+    if (!confirm(Translator.t("confirm_reset"))) return;
+    localStorage.clear();
+    // 修正：翻訳関数を使用
+    Toast.show(Translator.t("toast_reset_success"), "danger");
+    setTimeout(() => location.reload(), 1000);
+});
     }
 
     static apply(theme, accentColor = "#7c5cff") {
@@ -267,12 +284,12 @@ class QueueManager {
 
     static add(item) {
         if (this.queue.find(v => v.id === item.id)) {
-            Toast.show("📋 既にキューにあります", "warning");
+            Toast.show(Translator.t("toast_queue_exists"), "warning");
             return;
         }
         this.queue.push(item);
         this.save();
-        Toast.show(`📋 「${item.title.substring(0,20)}...」をキューに追加`);
+        Toast.show(Translator.t("toast_queue_added") + item.title.substring(0,20) + "...");
         this.render();
         DebugManager.updateStats();
     }
@@ -288,7 +305,7 @@ class QueueManager {
         this.queue = [];
         this.save();
         this.render();
-        Toast.show("📋 キューをクリアしました");
+        Toast.show(Translator.t("toast_queue_cleared"));
         DebugManager.updateStats();
     }
 
@@ -299,11 +316,11 @@ class QueueManager {
         }
         this.save();
         this.render();
-        Toast.show("🔀 シャッフルしました");
+        Toast.show(Translator.t("toast_queue_shuffled"));
     }
 
     static playAll() {
-        if (!this.queue.length) { Toast.show("キューが空です", "warning"); return; }
+        if (!this.queue.length) { Toast.show(Translator.t("toast_queue_empty"), "warning"); return; }
         this.queue.forEach((item, i) => {
             setTimeout(() => WindowManager.createWindow(item.id, item.title), i * 800);
         });
@@ -316,7 +333,7 @@ class QueueManager {
         if (!list) return;
         list.innerHTML = "";
         if (!this.queue.length) {
-            list.innerHTML = '<div class="no-results" style="padding:40px;">キューは空です。動画カードの 📋 ボタンで追加できます。</div>';
+            list.innerHTML = `<div class="no-results" style="padding:40px;">${Translator.t("empty_queue")}</div>`;
             return;
         }
         this.queue.forEach((item, idx) => {
@@ -352,10 +369,10 @@ class FavoritesManager {
         const idx = list.findIndex(v => v.id === item.id);
         if (idx > -1) {
             list.splice(idx, 1);
-            Toast.show("⭐ お気に入りから削除しました");
+            Toast.show(Translator.t("toast_fav_removed"));
         } else {
             list.push({ ...item, addedAt: Date.now() });
-            Toast.show("⭐ お気に入りに追加しました", "success");
+            Toast.show(Translator.t("toast_fav_added"), "success");
         }
         Storage.set("favorites", list);
         this.render();
@@ -379,7 +396,7 @@ class FavoritesManager {
 
         grid.innerHTML = "";
         if (!list.length) {
-            grid.innerHTML = '<div class="no-results" style="padding:40px;">お気に入りはまだありません。⭐ ボタンで追加できます。</div>';
+            grid.innerHTML = `<div class="no-results" style="padding:40px;">${Translator.t("empty_favorites")}</div>`;
             return;
         }
         list.forEach(item => {
@@ -424,7 +441,7 @@ class HistoryManager {
     static clearAll() {
         Storage.set("history", []);
         this.render();
-        Toast.show("🕒 視聴履歴をすべてクリアしました", "danger");
+        Toast.show(Translator.t("toast_hist_cleared"), "danger");
     }
 
     static render(filter = "") {
@@ -435,7 +452,7 @@ class HistoryManager {
 
         grid.innerHTML = "";
         if (!list.length) {
-            grid.innerHTML = `<div class="no-results" style="padding:40px;">${filter ? "検索結果なし" : "視聴履歴はありません。"}</div>`;
+            grid.innerHTML = `<div class="no-results" style="padding:40px;">${filter ? Translator.t("empty_history_search") : Translator.t("empty_history")}</div>`;
             return;
         }
         list.forEach(item => {
@@ -470,7 +487,7 @@ class WindowManager {
             const [firstId, firstEl] = this._windows.entries().next().value;
             firstEl.remove();
             this._windows.delete(firstId);
-            Toast.show("🪟 古いウィンドウを閉じました", "warning");
+            Toast.show(Translator.t("toast_old_win_closed"), "warning");
         }
 
         this._winCount++;
@@ -1178,82 +1195,124 @@ class YouTubeManager {
 
 class DebugManager {
     static history = [];
-
+    
     static init() {
-        Toast.show("🚀 DebugManager: Toastモードで起動完了");
+        	setTimeout(() => {
+        Toast.showLong("🚀 Notifications Will be Shown Here, Have Fun", "success");
+	}, 800);
     }
 
     static async fetch(url) {
         try {
             const r = await fetch(url);
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            
             const d = await r.json();
-
-            if (d?.results) {
-                this.history.push(...d.results);
-                Toast.show(`📡 データ受信: ${d.results.length}件の動画`, "success");
+            
+            if (d?.results && Array.isArray(d.results)) {
+                // 新しい結果を履歴に追加（重複除去）
+                const newItems = d.results.filter(item => 
+                    item && item.videoId && !this.history.some(h => h.videoId === item.videoId)
+                );
+                
+                this.history.unshift(...newItems); // 新しいものを先頭に
+                
+                // 履歴を最大200件に制限
+                if (this.history.length > 200) {
+                    this.history.length = 200;
+                }
+                
+                Toast.show(`📡 データ受信: ${newItems.length}件追加 (合計 ${this.history.length}件)`, "success");
             }
             return d;
-        } catch(e) {
-            Toast.show("❌ 通信エラーが発生しました", "danger");
+        } catch (e) {
+            console.error("DebugManager fetch error:", e);
+            Toast.show(`❌ 通信エラー: ${e.message}`, "danger");
             return null;
         }
     }
 
-    static updateStats() {}
-
     static dumpRawDataToToast() {
         try {
-            const results = this.history.length ? this.history : (window.ui?.allResults || []);
-            if (!results || results.length === 0) {
-                Toast.show("⚠️ 検検証できるデータがまだありません。", "warning");
-                return;
-            }
-
-            const validItems = results.filter(v => v && v.videoId && typeof v.title === "string");
+            let results = this.history.length ? this.history : (window.ui?.allResults || []);
             
-            if (validItems.length === 0) {
-                Toast.show("⚠️ 有効な動画データが履歴に見つかりません。", "warning");
+            if (!results || results.length === 0) {
+                Toast.show("⚠️ まだデバッグ対象のデータがありません。検索を実行してください。", "warning");
                 return;
             }
 
-            const uniqueItems = Array.from(
-                new Map(validItems.map(item => [item.videoId, item])).values()
-            ).slice(0, 3);
+            // 有効な動画のみ抽出
+            const validItems = results.filter(v => 
+                v && v.videoId && typeof v.title === "string"
+            );
 
-            Toast.show(`📊 取得データ検証（最新${uniqueItems.length}件）`, "success");
+            if (validItems.length === 0) {
+                Toast.show("⚠️ 有効な動画データが見つかりませんでした", "warning");
+                return;
+            }
 
-            uniqueItems.forEach((v, idx) => {
-                const title = v.title || "No Title";
-                const duration = v.duration || "時間不明";
-                
-                let isShortReason = "通常動画(2分半以上)";
-                
-                const parts = duration.split(':');
-                if (parts.length === 2) {
-                    const m = parseInt(parts[0], 10);
-                    const s = parseInt(parts[1], 10);
-                    if (m === 0 || m === 1 || (m === 2 && s < 30)) {
-                        isShortReason = "🔴 2分半未満（縦型疑惑）";
-                    }
-                } else if (parts.length === 1) {
-                    isShortReason = "🔴 1分未満（ショート確定）";
-                }
-                
-                if (v.isShort || title.toLowerCase().includes("#shorts") || title.toLowerCase().includes("#ショート")) {
-                    isShortReason = "🔴 ショート判定（タグ・フラグ）";
-                }
+            // 最新5件を対象に
+            const displayItems = validItems.slice(0, 5);
 
+            Toast.show(`🔍 デバッグ検証開始（最新 ${displayItems.length}件）`, "success");
+
+            displayItems.forEach((v, idx) => {
                 setTimeout(() => {
-                    Toast.show(`[${idx + 1}] ⏱【${duration}】: ${isShortReason} | ${title.substring(0, 15)}...`, "info");
-                }, (idx + 1) * 400);
+                    const title = v.title || "No Title";
+                    const duration = v.duration || "--:--";
+                    const isLive = !!v.isLive;
+                    const isShort = !!v.isShort;
+                    const isArchive = !!v.isLiveArchive;
+
+                    // duration解析
+                    let durationInfo = duration;
+                    if (duration && duration.includes(":")) {
+                        const parts = duration.split(':').map(Number);
+                        if (parts.length >= 2) {
+                            const minutes = parts[parts.length - 2] || 0;
+                            const seconds = parts[parts.length - 1] || 0;
+                            if (minutes < 2 || (minutes === 2 && seconds < 30)) {
+                                durationInfo += " 🔴 ショート候補";
+                            }
+                        }
+                    }
+
+                    let status = [];
+                    if (isLive) status.push("🔴 LIVE");
+                    if (isShort) status.push("📱 SHORT");
+                    if (isArchive) status.push("📼 アーカイブ");
+                    if (status.length === 0) status.push("通常");
+
+                    const message = 
+                        `[${idx + 1}] ${status.join(" ")} | ⏱ ${durationInfo} | ${title.substring(0, 28)}${title.length > 28 ? '...' : ''}`;
+
+                    Toast.show(message, isLive ? "danger" : (isShort ? "info" : "default"));
+                }, idx * 350);
             });
+
         } catch (err) {
-            console.error("Toast Debug Error:", err);
-            Toast.show("❌ トースト検証中にエラーが発生", "danger");
+            console.error("DebugManager dump error:", err);
+            Toast.show("❌ デバッグ表示中にエラーが発生しました", "danger");
         }
     }
-}
 
+    // 追加：特定の状態だけフィルタして表示
+    static dumpLiveOnly() {
+        const lives = this.history.filter(v => v.isLive);
+        if (lives.length === 0) {
+            Toast.show("現在ライブ中の動画は検出されていません", "warning");
+            return;
+        }
+        Toast.show(`🔴 検出されたライブ動画: ${lives.length}件`, "danger");
+        // 必要ならここにも詳細表示ロジックを追加可能
+    }
+
+    // 履歴クリア
+    static clearHistory() {
+        this.history = [];
+        Toast.show("🗑️ デバッグ履歴をクリアしました", "success");
+    }
+}
 class KeyboardManager {
     static focused = -1;
 
@@ -1335,13 +1394,14 @@ class TabManager {
                 tab.classList.add("active");
 
                 const map = {
-                    search:   "searchTab",
-                    trending: "trendingTab",
-                    queue:    "queueTab",
-                    favorites:"favoritesTab",
-                    history:  "historyTab",
-                    settings: "settingsTab",
-                    channel:  "channelTab",
+                    search:    "searchTab",
+                    trending:  "trendingTab",
+                    queue:     "queueTab",
+                    favorites: "favoritesTab",
+                    history:   "historyTab",
+                    settings:  "settingsTab",
+                    channel:   "channelTab",
+                    about:     "aboutTab", // ← ★ココ：この1行を追加します！
                 };
                 const target = map[tab.dataset.tab] || (tab.id === "channelTab" ? "channelTab" : null);
                 if (target) document.getElementById(target)?.classList.add("active");
@@ -1354,7 +1414,6 @@ class TabManager {
         });
     }
 }
-
 document.addEventListener("DOMContentLoaded", () => {
     const yt = new YouTubeManager();
 
@@ -1432,7 +1491,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             grid.innerHTML = "";
             cards.forEach(card => grid.appendChild(card));
-            Toast.show(`🔃 並べ替えを適用しました（${btn.textContent}）`, "success");
+            yt.applyFilter();
+            Toast.show(Translator.t("toast_sort_applied") + btn.textContent, "success");
         });
     });
 
@@ -1448,9 +1508,256 @@ document.addEventListener("DOMContentLoaded", () => {
     if (winSizeSel)  winSizeSel.value  = Storage.get("windowSize", "medium");
     if (maxWinSel)   maxWinSel.value   = Storage.get("maxWindows", 5);
     if (autoSel)     autoSel.checked   = Storage.get("autoplayEnabled", true);
+    Toast.show(Translator.t("toast_init_done"));
 
     DebugManager.init();
     DebugManager.updateStats();
-    
-    Toast.show("✨ Midnight System Ready");
 });
+
+// ============================================
+// 言語変更時の自動コンテンツ更新
+// ============================================
+if (typeof Translator !== "undefined") {
+    Translator.onLangChangeCallbacks.push((lang) => {
+        if (typeof QueueManager !== "undefined" && QueueManager.render) {
+            QueueManager.render();
+        }
+        if (typeof FavoritesManager !== "undefined" && FavoritesManager.render) {
+            FavoritesManager.render();
+        }
+        if (typeof HistoryManager !== "undefined" && HistoryManager.render) {
+            HistoryManager.render();
+        }
+    });
+}
+
+// ============================================
+// セッション復元機能（Session Restore V2）
+// ============================================
+class SessionManager {
+    static save() {
+        const session = {
+            searchQuery: document.getElementById("searchInput")?.value || "",
+            currentTab: document.querySelector(".tab.active")?.dataset.tab || "search",
+            scrollPosition: window.scrollY,
+            timestamp: Date.now()
+        };
+        Storage.set("session", session);
+    }
+
+    static restore() {
+        const session = Storage.get("session");
+        if (!session) return false;
+
+        const age = Date.now() - session.timestamp;
+        if (age > 86400000) return false; // 24時間以上古い場合は復元しない
+
+        // 検索クエリを復元
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput && session.searchQuery) {
+            searchInput.value = session.searchQuery;
+        }
+
+        return true;
+    }
+
+    static clear() {
+        Storage.remove("session");
+    }
+}
+
+// セッション自動保存
+window.addEventListener("beforeunload", () => {
+    SessionManager.save();
+});
+
+// ============================================
+// 拡張クイックアクション機能
+// ============================================
+class QuickActions {
+    static attachToCard(card) {
+        card.addEventListener("mouseenter", () => {
+            let overlay = card.querySelector(".quick-actions-overlay");
+            if (!overlay) {
+                overlay = document.createElement("div");
+                overlay.className = "quick-actions-overlay";
+                overlay.innerHTML = `
+                    <div class="quick-action-btn" title="${Translator.t('btn_play')}" data-action="play">▶</div>
+                    <div class="quick-action-btn" title="${Translator.t('pip_queue')}" data-action="queue">📋</div>
+                    <div class="quick-action-btn" title="${Translator.t('pip_favorite')}" data-action="fav">★</div>
+                    <div class="quick-action-btn" title="Copy URL" data-action="copy">🔗</div>
+                `;
+                card.appendChild(overlay);
+
+                overlay.querySelectorAll(".quick-action-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        const action = btn.dataset.action;
+                        const videoId = card.dataset.id;
+                        const title = card.querySelector(".card-title")?.textContent || "Video";
+
+                        switch(action) {
+                            case "play":
+                                WindowManager.createWindow(videoId, title);
+                                break;
+                            case "queue":
+                                QueueManager.add({id: videoId, title});
+                                break;
+                            case "fav":
+                                FavoritesManager.toggle({id: videoId, title});
+                                break;
+                            case "copy":
+                                navigator.clipboard.writeText(`https://youtu.be/${videoId}`);
+                                Toast.show("URL copied!", "success");
+                                break;
+                        }
+                    });
+                });
+            }
+        });
+    }
+}
+
+// ============================================
+// Watch Later（後で見るリスト）
+// ============================================
+class WatchLaterManager {
+    static watchLater = Storage.get("watchLater", []);
+
+    static add(item) {
+        if (this.watchLater.find(v => v.id === item.id)) {
+            Toast.show("Already in Watch Later", "warning");
+            return;
+        }
+        this.watchLater.push(item);
+        this.save();
+        Toast.show("Added to Watch Later", "success");
+    }
+
+    static remove(id) {
+        this.watchLater = this.watchLater.filter(v => v.id !== id);
+        this.save();
+    }
+
+    static save() {
+        Storage.set("watchLater", this.watchLater);
+    }
+
+    static getCount() {
+        return this.watchLater.length;
+    }
+}
+
+// ============================================
+// 再検索キャッシュシステム（パフォーマンス改善）
+// ============================================
+class SearchCache {
+    static cache = new Map();
+    static maxSize = 50;
+
+    static get(query, filter) {
+        const key = `${query}:${filter}`;
+        return this.cache.get(key);
+    }
+
+    static set(query, filter, results) {
+        const key = `${query}:${filter}`;
+        
+        if (this.cache.size >= this.maxSize) {
+            const firstKey = this.cache.keys().next().value;
+            this.cache.delete(firstKey);
+        }
+        
+        this.cache.set(key, {
+            results,
+            timestamp: Date.now()
+        });
+    }
+
+    static clear() {
+        this.cache.clear();
+    }
+}
+
+// 既存のSearchManager.searchに統合
+const originalSearch = typeof SearchManager !== "undefined" ? SearchManager.search : null;
+
+// ============================================
+// 統計情報の強化
+// ============================================
+class EnhancedStats {
+    static getStats() {
+        return {
+            searchCount: Storage.get("searchCount", 0),
+            watchedVideos: HistoryManager.history.length,
+            favoriteCount: FavoritesManager.favorites.length,
+            queueCount: QueueManager.queue.length,
+            watchLaterCount: WatchLaterManager.getCount(),
+            mostWatchedChannel: this.getMostWatched(),
+            avgWatchTime: this.getAvgWatchTime()
+        };
+    }
+
+    static getMostWatched() {
+        const channels = {};
+        HistoryManager.history.forEach(item => {
+            const channel = item.channel || "Unknown";
+            channels[channel] = (channels[channel] || 0) + 1;
+        });
+        return Object.entries(channels)
+            .sort(([,a], [,b]) => b - a)[0]?.[0] || "N/A";
+    }
+
+    static getAvgWatchTime() {
+        // 簡易版：仮のwatch timeを計算
+        return Math.round(HistoryManager.history.length * 5) + " min";
+    }
+}
+
+// ============================================
+// キーボードショートカット
+// ============================================
+class Keyboard {
+    static init() {
+        document.addEventListener("keydown", (e) => {
+            // Ctrl/Cmd + K: 検索にフォーカス
+            if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+                e.preventDefault();
+                document.getElementById("searchInput")?.focus();
+            }
+            
+            // Ctrl/Cmd + S: セッション保存
+            if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+                e.preventDefault();
+                SessionManager.save();
+                Toast.show("Session saved", "success");
+            }
+        });
+    }
+}
+
+// 初期化時に有効化
+if (typeof document !== "undefined") {
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            Keyboard.init();
+        }, 1000);
+    });
+}
+
+// ============================================
+// 言語変更時の自動コンテンツ更新
+// ============================================
+if (typeof Translator !== "undefined") {
+    Translator.onLangChangeCallbacks.push((lang) => {
+        if (typeof QueueManager !== "undefined" && QueueManager.render) {
+            QueueManager.render();
+        }
+        if (typeof FavoritesManager !== "undefined" && FavoritesManager.render) {
+            FavoritesManager.render();
+        }
+        if (typeof HistoryManager !== "undefined" && HistoryManager.render) {
+            HistoryManager.render();
+        }
+    });
+}
