@@ -358,7 +358,7 @@ input[type="color"]::-webkit-color-swatch { border: 1px solid var(--panel3); bor
 .rotating-text {
   font-size: 13px;
   font-weight: 600;
-  color: #7c5cff;      /* 固定で鮮やかな紫（または var(--text) などで文字色に合わせる） */
+  color: var(--accent);      /* 固定で鮮やかな紫（または var(--text) などで文字色に合わせる） */
   letter-spacing: 1px;
   display: inline-block;
   transform-style: preserve-3d;
