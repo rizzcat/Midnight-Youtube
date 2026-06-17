@@ -41,3 +41,89 @@ body.theme-aurora   .tab.active,
 body.theme-rose     .tab.active {
     box-shadow:0 0 10px var(--accent), 0 0 20px rgba(255,255,255,.1);
 }
+
+/* ==========================  YELLOW ========================== */
+body.theme-yellow { 
+    --bg: #0c0b05;       /* 極めて深い黒に近い黄色 */
+    --panel: #16150a;    /* 暗いトーンのパネル */
+    --panel2: #222010;   /* 中間のパネル */
+    --panel3: #2e2b16;   /* 明るめのパネル */
+    --accent: #ffd700;   /* 鮮やかなゴールド・イエロー */
+    --accent2: #ffe566;  /* 明るい黄色 */
+    --text: #fffdf0;     /* 少し黄色みがかった白 */
+    --muted: #a6a080;    /* くすんだ黄色（テキスト弱） */
+}
+body.theme-yellow .logo-text { text-shadow: 0 0 12px rgba(255,215,0,0.4); }
+
+/* ==========================  LUNAR ========================== */
+body.theme-lunar { 
+    --bg: #0b0c10;       /* 宇宙の深淵をイメージした黒 */
+    --panel: #141720;    /* 月夜の影のようなディープブルーグレー */
+    --panel2: #1f2330;   
+    --panel3: #2a2f40;   
+    --accent: #90a4ae;   /* 月光をイメージした神秘的なシルバーグレー */
+    --accent2: #cfd8dc;  /* 明るい月光の白 */
+    --text: #eceff1;     
+    --muted: #607d8b;    
+}
+
+body.theme-hbl{
+    --bg:#0099ff;
+    --panel:#0d2a57;
+    --panel2:#16376d;
+    --panel3:#1e4787;
+
+    --accent:#ffffff;
+    --accent2:#7ed8ff;
+
+    --text:#ffffff;
+    --muted:#b9d4ff;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #29b4ff 0%,
+            #0f7de8 35%,
+            #0055cc 100%
+        );
+}
+
+body.theme-hbl::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.08) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.08) 1px,
+            transparent 1px
+        );
+
+    background-size:32px 32px;
+
+    pointer-events:none;
+    opacity:.35;
+}
+
+body.theme-hbl .tab.active{
+    border:2px solid #fff !important;
+
+    box-shadow:
+        0 0 20px rgba(255,255,255,.4),
+        inset 0 0 10px rgba(255,255,255,.25);
+
+    background:rgba(255,255,255,.12);
+}
+
+body.theme-hbl .logo-text{
+    color:#fff;
+
+    text-shadow:
+        0 2px 0 #000,
+        0 0 8px rgba(255,255,255,.6);
+}
